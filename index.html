@@ -103,6 +103,10 @@ input[type=range]{width:100%; accent-color:var(--accent); height:26px}
 .tab.on{background:var(--accent); color:#fff; border-color:var(--accent)}
 .trk-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px}
 .trk-head h1{font-family:'Bricolage Grotesque'; font-size:24px; font-weight:700; letter-spacing:-.5px}
+.habit-pick{position:relative; display:inline-flex; align-items:center; gap:6px; max-width:72%}
+.habit-pick select{appearance:none; -webkit-appearance:none; background:transparent; border:none; font-family:'Bricolage Grotesque'; font-size:23px; font-weight:700; letter-spacing:-.5px; color:var(--ink); cursor:pointer; padding:0; max-width:100%; text-overflow:ellipsis}
+.habit-pick .chev{color:var(--accent); font-size:15px; pointer-events:none; flex-shrink:0}
+.mobile-only{display:none}
 .trk-head .d{font-size:13px; color:var(--accent); font-weight:600}
 .pbar{height:8px; background:var(--card2); border-radius:100px; overflow:hidden; margin:10px 0 6px}
 .pbar i{display:block; height:100%; background:var(--accent); border-radius:100px; transition:width .5s cubic-bezier(.2,.8,.2,1)}
@@ -189,6 +193,24 @@ input[type=range]{width:100%; accent-color:var(--accent); height:26px}
 @keyframes pulse{0%{transform:scale(.7); opacity:.6} 100%{transform:scale(1.25); opacity:0}}
 @keyframes fall{to{transform:translateY(900px) rotate(540deg); opacity:0}}
 @keyframes buzz{0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)}}
+
+/* ===== phone / responsive ===== */
+@media (max-width: 480px){
+  body{ padding:0; gap:0; background-attachment:fixed; }
+  .wordmark, .hint{ display:none; }
+  .stage{ gap:0; width:100%; }
+  .phone{ width:100%; height:auto; min-height:100dvh; border-radius:0; padding:0; box-shadow:none; background:transparent; }
+  .notch{ display:none; }
+  .screen{ height:auto; min-height:100dvh; border-radius:0; }
+  .statusbar{ display:none; }
+  .view{ overflow:visible; padding-top:calc(env(safe-area-inset-top,0px) + 18px); padding-bottom:90px; }
+  .ov{ position:fixed; inset:0; border-radius:0; z-index:300; }
+  .watchwrap{ display:none !important; }
+  .mobile-only{ display:block; }
+  .devbar{ position:fixed; bottom:0; left:0; right:0; max-width:100%; border-radius:16px 16px 0 0; z-index:200; padding:10px 12px env(safe-area-inset-bottom,12px); }
+  .devbar .lab{ display:none; }
+  .devbar button{ font-size:12px; padding:7px 11px; }
+}
 </style>
 </head>
 <body>
@@ -235,6 +257,7 @@ input[type=range]{width:100%; accent-color:var(--accent); height:26px}
             </div>
           </div>
         </div>
+        <div class="watch-cap mobile-only" style="margin-top:16px">⌚ Your Apple Watch buzzed too</div>
         <button class="link" id="nudgeClose" style="color:var(--dim)">close preview</button>
       </div>
 
@@ -280,6 +303,7 @@ input[type=range]{width:100%; accent-color:var(--accent); height:26px}
 <div class="devbar">
   <span class="lab">demo controls — the real app uses real days &amp; real notifications</span>
   <span class="day">Simulated day: <b id="simDay">1</b></span>
+  <button id="notifFlow">🔔 Notification flow</button>
   <button id="skipDay">⏭ Skip a day (miss)</button>
   <button id="reset">↺ Restart demo</button>
 </div>
@@ -432,8 +456,14 @@ function renderTracker(){
   }
   v.innerHTML=`
     <div class="warnbar">⚠️ <span>Miss a day and your progress drops by one. Show up daily — the streak only grows when you do.</span></div>
-    ${state.habits.length>1?`<div class="tabs">${state.habits.map((hh,j)=>`<div class="tab ${j===i?'on':''}" onclick="state.selected=${j};save();render()">${esc(hh.name)}</div>`).join('')}</div>`:''}
-    <div class="trk-head"><h1>${esc(h.name)}</h1><span class="d">${p.isComplete?'Complete':'Day '+(p.struck+ (p.isDoneToday?0:1))}</span></div>
+    <div class="lbl" style="margin:2px 2px 6px"><span>Tracking</span></div>
+    <div class="trk-head">
+      <div class="habit-pick">
+        <select id="habitSel">${state.habits.map((hh,j)=>`<option value="${j}" ${j===i?'selected':''}>${esc(hh.name)}</option>`).join('')}</select>
+        <span class="chev">▾</span>
+      </div>
+      <span class="d">${p.isComplete?'Complete':'Day '+(p.struck+ (p.isDoneToday?0:1))}</span>
+    </div>
     <div class="pbar"><i style="width:${p.struck/p.goal*100}%"></i></div>
     <div class="remain"><b>${p.struck}</b> of ${p.goal} days done · ${p.isComplete?'🎉 done!':'<b>'+p.remaining+'</b> to go'}</div>
     ${grid}
@@ -443,6 +473,7 @@ function renderTracker(){
     ${(!h.maintenance && p.struck>=15 && p.struck<30)?`<div class="mtn">⚡ <b>Halfway — the habit is built.</b> Day 16+ is maintenance. Keep showing up.</div>`:''}
     <button class="simbtn" id="simBtn" ${p.isDoneToday?'disabled':''}>🔔 ${p.isDoneToday?'All done — nudges off today':'Preview a notification'}</button>
     <div class="note" style="margin-top:12px">Reminders: <b>${cadence}</b>, ${win}. They stop the moment you finish.</div>`;
+  const sel=$('#habitSel'); if(sel) sel.onchange=e=>{ state.selected=+e.target.value; save(); render(); };
   $('#startBtn').onclick=()=>{ if(!p.isDoneToday && !p.isComplete) startRitual(i); };
   $('#simBtn').onclick=()=>{ if(!p.isDoneToday) showNudge(i); };
 }
@@ -539,6 +570,16 @@ function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('sh
 function doShare(txt){ const m=`I just hit "${txt}" on my 5·4·3·2·1 habit tracker 🔥`;
   if(navigator.share){ navigator.share({text:m}).catch(()=>{}); } else { toast('Shared! (demo)'); } }
 
+$('#notifFlow').onclick=()=>{
+  if(!state.onboarded){
+    state.habits=[{name:'Read 10 pages',mins:30,start:simNow().toISOString(),done:[],maintenance:false}];
+    state.notif={startHour:8,endHour:22,every:1}; state.blocked=['Instagram']; state.onboarded=true; state.selected=0; state.earned={}; save(); render();
+    toast('Demo habit added — here comes a nudge');
+  }
+  const i=state.selected;
+  if(progress(state.habits[i]).isDoneToday){ toast('Already done today — nudges are off'); return; }
+  showNudge(i);
+};
 $('#skipDay').onclick=()=>{ state.offset++; save(); render(); };
 $('#reset').onclick=()=>{ if(confirm('Restart the whole demo?')){ state=fresh(); ob=null; save(); render(); } };
 document.addEventListener('visibilitychange',()=>{

@@ -227,6 +227,11 @@ body{ background-image: radial-gradient(58% 44% at 10% 2%, var(--accent-soft), t
 .phead h1{ font-family:'Inter'; font-size:24px; font-weight:700; letter-spacing:-.5px; }
 .hcard{ display:flex; align-items:center; gap:15px; background:var(--card); border:1px solid var(--stroke); border-radius:22px; padding:16px; margin-bottom:12px; cursor:pointer; transition:.18s; }
 .hcard:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+.hcard.col{ flex-direction:column; align-items:stretch; gap:9px; }
+.hc-top{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+.hc-count{ font-weight:700; color:var(--accent); font-size:14px; font-variant-numeric:tabular-nums; flex-shrink:0; }
+.hcard.col .hc-meta{ margin-top:-4px; }
+.hcard.col .pbar{ margin:2px 0 0; }
 .ring2{ width:62px; height:62px; border-radius:50%; display:grid; place-items:center; flex-shrink:0; }
 .ring2-in{ width:48px; height:48px; border-radius:50%; background:var(--card); display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.05; }
 .ring2-in b{ font-size:18px; font-weight:700; } .ring2-in small{ font-size:10px; color:var(--dim); }
@@ -554,16 +559,16 @@ function renderProgress(){
     </div>
     <p class="lead" style="margin:2px 2px 16px">Track every habit and how far you are. Tap one to focus on it.</p>
     ${state.habits.map((h,j)=>{
-      const p=progress(h), pct=Math.round(p.struck/p.goal*360), col=ringColors[j%3];
+      const p=progress(h), pct=Math.round(p.struck/p.goal*100), col=ringColors[j%3];
       const status = p.isComplete?'Complete 🎉':(p.isDoneToday?'Done today ✓':`${Math.max(0,30-p.struck)} days to routine`);
-      return `<div class="hcard" onclick="state.selected=${j};state.screen='today';save();render()">
-        <div class="ring2" style="background:conic-gradient(${col} ${pct}deg, var(--card2) 0)"><div class="ring2-in"><b>${p.struck}</b><small>/${p.goal}</small></div></div>
-        <div class="hc-body">
+      return `<div class="hcard col" onclick="state.selected=${j};state.screen='today';save();render()">
+        <div class="hc-top">
           <div class="hc-name">${esc(h.name)}</div>
-          <div class="hc-meta">${h.mins} min/day · ${p.struck>=15?'habit built':'building'}</div>
-          <div class="hc-status" style="color:${p.isDoneToday||p.isComplete?'var(--good)':'var(--dim)'}">${status}</div>
+          <span class="hc-count">${p.struck}/${p.goal}</span>
         </div>
-        <span class="hc-go">›</span>
+        <div class="hc-meta">${h.mins} min/day · ${p.struck>=15?'habit built':'building'}</div>
+        <div class="pbar"><i style="width:${pct}%; background:${col}"></i></div>
+        <div class="hc-status" style="color:${p.isDoneToday||p.isComplete?'var(--good)':'var(--dim)'}">${status}</div>
       </div>`;
     }).join('')}
     ${state.habits.length<3?`<button class="seeall" id="addMore">+ Add another habit</button>`:''}

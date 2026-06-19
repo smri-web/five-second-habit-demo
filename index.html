@@ -336,7 +336,9 @@ function renderOnboarding(){
       <p class="lead">One habit, done daily, is how a routine actually sticks. Only add a 2nd or 3rd if they're <b>interlinked</b> and feed the same “hero” habit.</p>
       <div class="eg good"><div class="h">✓ works — parallel habits</div><div class="d">Read → Write → Publish a post daily. Or: Gym → Cook protein → Cook at home.</div></div>
       <div class="eg bad"><div class="h">✕ too scattered</div><div class="d">Gym + Learn a language + 2 hrs with family. Different worlds — you'll burn out.</div></div>
-      <button class="btn" onclick="ob.step=1;render()">Got it — add my habit</button>`;
+      <div class="lbl" style="margin-top:18px"><span>How to create your habit</span></div>
+      <div class="eg"><div class="d">Pick one <b>hero habit</b> — say <b>Gym</b>. Then stack only what feeds it: <b>cook protein</b>, then <b>cook at home</b>. Same goal, different actions. Lock in the hero first, and add the next one only once it feels automatic.</div></div>
+      <button class="btn" onclick="ob.step=1;render()">I understand, continue</button>`;
     return;
   }
   if(ob.step===1){

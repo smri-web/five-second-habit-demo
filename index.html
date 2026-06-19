@@ -3,378 +3,542 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>5·4·3·2·1 — prototype</title>
+<title>5·4·3·2·1 — habit tracker demo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ===== system light/dark ===== */
 :root{
-  --bg:#0a0a0d; --card:#141319; --card2:#1c1a22; --ink:#f5f3f7;
-  --dim:rgba(245,243,247,.52); --dimmer:rgba(245,243,247,.30);
-  --accent:#ff6f91; --accent-2:#ffd07a; --accent-soft:rgba(255,111,145,.14);
-  --stroke:rgba(255,255,255,.08); --stroke-2:rgba(255,255,255,.14);
-  --disp:'Bricolage Grotesque',sans-serif; --body:'Hanken Grotesk',sans-serif;
+  --bg:#fbf7f6; --card:#ffffff; --card2:#f4edeb; --ink:#2b2126;
+  --dim:rgba(43,33,38,.56); --dimmer:rgba(43,33,38,.34);
+  --accent:#e0476a; --accent-2:#c98a12; --accent-soft:rgba(224,71,106,.12);
+  --stroke:rgba(0,0,0,.09); --stroke-2:rgba(0,0,0,.15);
+  --good:#1d9e75; --good-soft:rgba(29,158,117,.14);
+  --bezel:#16151b; --bezel2:#2a2832;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0a0a0d; --card:#141319; --card2:#1c1a22; --ink:#f5f3f7;
+    --dim:rgba(245,243,247,.55); --dimmer:rgba(245,243,247,.30);
+    --accent:#ff6f91; --accent-2:#ffd07a; --accent-soft:rgba(255,111,145,.14);
+    --stroke:rgba(255,255,255,.08); --stroke-2:rgba(255,255,255,.15);
+    --good:#5dcaa5; --good-soft:rgba(93,202,165,.16);
+    --bezel:#16151b; --bezel2:#2a2832;
+  }
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{
-  font-family:var(--body); background:var(--bg); color:var(--ink);
+  font-family:'Hanken Grotesk',sans-serif; background:var(--bg); color:var(--ink);
   min-height:100vh; display:flex; flex-direction:column; align-items:center;
-  justify-content:center; gap:26px; padding:40px 16px;
+  justify-content:flex-start; gap:20px; padding:34px 16px 60px;
   background-image:
-    radial-gradient(60% 50% at 18% 8%, rgba(255,111,145,.16), transparent 60%),
-    radial-gradient(50% 45% at 88% 92%, rgba(255,208,122,.10), transparent 60%);
-  overflow-x:hidden;
+    radial-gradient(55% 45% at 16% 6%, var(--accent-soft), transparent 60%),
+    radial-gradient(45% 40% at 88% 96%, rgba(201,138,18,.10), transparent 60%);
 }
-body::before{ /* grain */
-  content:""; position:fixed; inset:0; pointer-events:none; opacity:.035; z-index:9999;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-.wordmark{font-family:var(--disp); font-weight:600; letter-spacing:-.5px; font-size:15px; color:var(--dim)}
+.wordmark{font-family:'Bricolage Grotesque'; font-weight:600; letter-spacing:-.4px; font-size:14px; color:var(--dim)}
 .wordmark b{color:var(--accent)}
 
-/* ---------- phone frame ---------- */
-.phone{
-  position:relative; width:384px; height:812px; border-radius:54px;
-  background:#000; padding:11px;
-  box-shadow:0 0 0 11px #16151b, 0 0 0 12px #2a2832, 0 40px 90px -20px rgba(0,0,0,.9),
-             0 0 120px -30px rgba(255,111,145,.25);
-}
-.notch{position:absolute; top:20px; left:50%; transform:translateX(-50%); width:120px; height:30px;
-  background:#000; border-radius:18px; z-index:60}
-.screen{
-  position:relative; width:100%; height:100%; border-radius:44px; overflow:hidden;
-  background:var(--bg); display:flex; flex-direction:column;
-}
-.statusbar{display:flex; justify-content:space-between; align-items:center; padding:16px 28px 4px;
-  font-size:13px; font-weight:600; color:var(--ink); flex-shrink:0}
-.statusbar .dots{display:flex; gap:5px; align-items:center; color:var(--ink)}
-
-.view{flex:1; overflow-y:auto; padding:8px 20px 30px; scrollbar-width:none}
+/* ===== phone ===== */
+.stage{display:flex; gap:26px; align-items:flex-start; flex-wrap:wrap; justify-content:center}
+.phone{position:relative; width:384px; height:812px; border-radius:54px; background:#000; padding:11px;
+  box-shadow:0 0 0 11px var(--bezel),0 0 0 12px var(--bezel2),0 40px 90px -24px rgba(0,0,0,.55),
+             0 0 120px -34px var(--accent)}
+.notch{position:absolute; top:20px; left:50%; transform:translateX(-50%); width:118px; height:30px; background:#000; border-radius:18px; z-index:60}
+.screen{position:relative; width:100%; height:100%; border-radius:44px; overflow:hidden; background:var(--bg); display:flex; flex-direction:column}
+.statusbar{display:flex; justify-content:space-between; align-items:center; padding:15px 28px 2px; font-size:13px; font-weight:600; flex-shrink:0}
+.view{flex:1; overflow-y:auto; padding:6px 20px 28px; scrollbar-width:none}
 .view::-webkit-scrollbar{display:none}
 
-/* ---------- home ---------- */
-.home-head{display:flex; align-items:center; justify-content:space-between; padding:14px 4px 18px}
-.home-head h1{font-family:var(--disp); font-weight:700; font-size:30px; letter-spacing:-1.5px}
-.home-head h1 i{font-style:normal; color:var(--accent)}
-.add-btn{width:40px; height:40px; border-radius:50%; border:1px solid var(--stroke-2);
-  background:var(--card); color:var(--ink); font-size:22px; cursor:pointer; display:grid;
-  place-items:center; transition:.2s; line-height:0}
-.add-btn:hover{background:var(--card2); transform:scale(1.06)}
-.add-btn:disabled{opacity:.3; cursor:not-allowed}
-
-.card{background:var(--card); border:1px solid var(--stroke); border-radius:26px;
-  padding:22px 20px; margin-bottom:16px; box-shadow:0 14px 30px -22px rgba(0,0,0,.9);
-  animation:rise .5s cubic-bezier(.2,.8,.2,1) backwards}
-.card-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
-.card-top h2{font-family:var(--disp); font-size:21px; font-weight:600; letter-spacing:-.5px}
-.badge{font-size:12px; font-weight:600; color:var(--dim); white-space:nowrap}
-.badge.done{color:var(--accent)}
-.remain{font-size:14px; color:var(--dim); margin:6px 0 16px}
-.remain b{color:var(--ink); font-weight:600}
-
-.grid{display:grid; grid-template-columns:repeat(6,1fr); gap:7px; margin-bottom:18px}
-.cell{position:relative; aspect-ratio:1; border-radius:9px; background:var(--card2);
-  border:1px solid var(--stroke); display:grid; place-items:center; font-size:11px;
-  font-weight:600; color:var(--dimmer); overflow:hidden; transition:background .35s,color .35s}
-.cell.struck{background:var(--accent-soft); border-color:rgba(255,111,145,.4); color:var(--accent)}
-.cell.struck::after{content:""; position:absolute; left:12%; right:12%; height:2px;
-  background:var(--accent); transform:rotate(-22deg); transform-origin:center;
-  animation:strike .4s cubic-bezier(.2,.8,.2,1)}
-.cell.pop{animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
-
-.start{width:100%; border:none; border-radius:100px; padding:17px; font-family:var(--body);
-  font-size:16px; font-weight:700; letter-spacing:.3px; cursor:pointer; color:#1a1014;
-  background:var(--accent); transition:.2s; box-shadow:0 10px 26px -10px rgba(255,111,145,.6)}
-.start:hover{transform:translateY(-2px); box-shadow:0 16px 34px -10px rgba(255,111,145,.7)}
-.start:active{transform:translateY(0)}
-.start.is-done{background:var(--card2); color:var(--dim); box-shadow:none; cursor:default}
-.cap-note{text-align:center; font-size:12.5px; color:var(--dimmer); margin-top:4px}
-
-/* ---------- onboarding ---------- */
-.ob{height:100%; display:flex; flex-direction:column; justify-content:center; padding:0 6px; gap:14px}
-.ob .kicker{font-size:12px; font-weight:600; letter-spacing:2px; color:var(--accent); text-transform:uppercase}
-.ob h1{font-family:var(--disp); font-size:38px; line-height:1.02; font-weight:700; letter-spacing:-1.5px}
-.ob p{color:var(--dim); font-size:15px; margin-bottom:6px}
-.field{width:100%; background:var(--card); border:1px solid var(--stroke-2); border-radius:16px;
-  padding:16px 18px; color:var(--ink); font-family:var(--body); font-size:16px; outline:none; transition:.2s}
+/* ===== onboarding ===== */
+.ob-prog{height:5px; background:var(--card2); border-radius:100px; margin:8px 2px 20px; overflow:hidden}
+.ob-prog i{display:block; height:100%; background:var(--accent); border-radius:100px; transition:width .4s cubic-bezier(.2,.8,.2,1)}
+.step-eyebrow{font-size:11px; font-weight:700; letter-spacing:2px; color:var(--accent); text-transform:uppercase}
+h2.q{font-family:'Bricolage Grotesque'; font-size:27px; line-height:1.08; font-weight:700; letter-spacing:-1px; margin:8px 0 6px}
+.lead{color:var(--dim); font-size:14.5px; line-height:1.55; margin-bottom:16px}
+.eg{border:1px solid var(--stroke); border-radius:16px; padding:13px 15px; margin-bottom:10px; background:var(--card)}
+.eg.good{border-color:rgba(29,158,117,.4)} .eg.bad{border-color:rgba(224,71,106,.35)}
+.eg .h{font-size:12.5px; font-weight:700; display:flex; align-items:center; gap:7px; margin-bottom:3px}
+.eg.good .h{color:var(--good)} .eg.bad .h{color:var(--accent)}
+.eg .d{font-size:13px; color:var(--dim)}
+.field{width:100%; background:var(--card); border:1px solid var(--stroke-2); border-radius:14px; padding:14px 16px; color:var(--ink); font-family:inherit; font-size:16px; outline:none; transition:.2s}
 .field:focus{border-color:var(--accent)}
 .field::placeholder{color:var(--dimmer)}
-.primary{width:100%; border:none; border-radius:100px; padding:17px; font-family:var(--body);
-  font-size:16px; font-weight:700; cursor:pointer; color:#1a1014; background:var(--accent); transition:.2s}
-.primary:hover{transform:translateY(-2px)}
-.primary:disabled{opacity:.35; cursor:not-allowed; transform:none}
-.locked{display:flex; gap:12px; align-items:center; background:var(--card); border:1px solid var(--stroke);
-  border-radius:16px; padding:15px 16px; margin-top:10px}
-.locked .lk{font-size:18px; opacity:.6}
-.locked .t1{font-size:14px; font-weight:600}
-.locked .t2{font-size:12px; color:var(--dim); margin-top:2px}
-.locked .pill{margin-left:auto; font-size:10px; font-weight:700; letter-spacing:.5px; color:var(--accent-2);
-  border:1px solid rgba(255,208,122,.35); border-radius:100px; padding:4px 9px; white-space:nowrap}
+.lbl{font-size:13px; font-weight:600; margin:14px 2px 8px; display:flex; justify-content:space-between}
+.lbl b{color:var(--accent); font-weight:700}
+input[type=range]{width:100%; accent-color:var(--accent); height:26px}
+.added{display:flex; align-items:center; gap:10px; background:var(--card2); border-radius:14px; padding:11px 14px; margin-top:8px}
+.added .nm{font-weight:600; font-size:14px}
+.added .mins{margin-left:auto; font-size:12.5px; color:var(--dim)}
+.added .x{cursor:pointer; color:var(--dimmer); font-size:18px; line-height:1}
+.warn{display:flex; gap:9px; align-items:flex-start; background:var(--accent-soft); border:1px solid rgba(224,71,106,.3); border-radius:13px; padding:11px 13px; font-size:12.5px; color:var(--ink); margin-top:12px; line-height:1.45}
+.note{background:var(--card2); border-radius:13px; padding:12px 14px; font-size:12.5px; color:var(--dim); margin-top:12px; line-height:1.5}
+.note b{color:var(--ink)}
+.choices{display:flex; flex-direction:column; gap:9px; margin-top:6px}
+.choice{display:flex; align-items:center; gap:12px; border:1px solid var(--stroke-2); border-radius:14px; padding:14px; cursor:pointer; transition:.15s; background:var(--card)}
+.choice.sel{border-color:var(--accent); background:var(--accent-soft)}
+.choice .r{width:20px;height:20px;border-radius:50%;border:2px solid var(--stroke-2); flex-shrink:0; display:grid; place-items:center}
+.choice.sel .r{border-color:var(--accent)}
+.choice.sel .r::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.choice .ct{font-weight:600; font-size:14.5px} .choice .cs{font-size:12px; color:var(--dim)}
+.applist{display:flex; flex-direction:column; gap:8px; margin-top:6px}
+.appitem{display:flex; align-items:center; gap:12px; border:1px solid var(--stroke); border-radius:14px; padding:11px 13px; cursor:pointer; background:var(--card); transition:.15s}
+.appitem.sel{border-color:var(--accent)}
+.appicon{width:34px;height:34px;border-radius:9px; display:grid; place-items:center; font-size:18px; flex-shrink:0; color:#fff; font-weight:700}
+.appitem .an{font-weight:600; font-size:14px}
+.appitem .chk{margin-left:auto; width:24px;height:24px;border-radius:7px; border:1px solid var(--stroke-2); display:grid; place-items:center; color:#fff}
+.appitem.sel .chk{background:var(--accent); border-color:var(--accent)}
+.times{display:flex; gap:10px; margin-top:6px}
+.times .field{text-align:center; font-variant-numeric:tabular-nums}
 
-/* ---------- overlays ---------- */
-.overlay{position:absolute; inset:0; z-index:50; border-radius:44px; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:18px; text-align:center; padding:40px;
-  background:radial-gradient(circle at 50% 38%, #18121a, #0a0a0d 75%); opacity:0; pointer-events:none;
-  transition:opacity .35s}
-.overlay.show{opacity:1; pointer-events:auto}
-.ovl-kicker{font-size:12px; font-weight:600; letter-spacing:3px; color:var(--dim); text-transform:uppercase}
-.count{font-family:var(--disp); font-weight:800; font-size:170px; line-height:1; letter-spacing:-6px; color:var(--ink)}
-.count.go{font-size:104px; color:var(--accent); text-shadow:0 0 50px rgba(255,111,145,.5)}
-@keyframes tickIn{0%{opacity:0; transform:scale(.4) translateY(10px); filter:blur(6px)}
-  60%{opacity:1; filter:blur(0)} 100%{opacity:1; transform:scale(1)}}
-.count.anim{animation:tickIn .5s cubic-bezier(.2,.9,.3,1)}
-.sub{font-size:18px; color:var(--ink); font-weight:500}
-.ring{position:absolute; width:300px; height:300px; border-radius:50%; border:1px solid var(--stroke-2);
-  animation:pulse 1s ease-out infinite}
-@keyframes pulse{0%{transform:scale(.7); opacity:.7} 100%{transform:scale(1.25); opacity:0}}
+.btn{width:100%; border:none; border-radius:100px; padding:16px; font-family:inherit; font-size:16px; font-weight:700; cursor:pointer; color:#fff; background:var(--accent); transition:.2s; margin-top:18px}
+.btn:hover{transform:translateY(-2px)} .btn:disabled{opacity:.35; cursor:not-allowed; transform:none}
+.btn.ghost{background:transparent; color:var(--dim); border:1px solid var(--stroke-2); margin-top:8px}
+.link{display:block; text-align:center; color:var(--accent); font-size:13.5px; font-weight:600; margin-top:14px; cursor:pointer; background:none; border:none; width:100%; font-family:inherit}
 
-/* focus */
-.focus-name{font-family:var(--disp); font-size:32px; font-weight:700; letter-spacing:-1px; max-width:280px}
-.timer{font-size:54px; font-weight:300; font-variant-numeric:tabular-nums; letter-spacing:1px}
-.welcome{color:var(--accent); font-weight:600; font-size:15px; height:18px; opacity:0; transition:.3s}
-.welcome.show{opacity:1}
-.done-btn{margin-top:6px; border:none; border-radius:100px; padding:16px 60px; font-family:var(--body);
-  font-size:17px; font-weight:700; color:#1a1014; background:var(--accent); cursor:pointer; transition:.2s}
-.done-btn:hover{transform:translateY(-2px)}
+/* ===== tracker ===== */
+.warnbar{background:var(--accent-soft); border:1px solid rgba(224,71,106,.3); border-radius:14px; padding:11px 14px; font-size:12.5px; color:var(--ink); margin:10px 0 16px; line-height:1.45; display:flex; gap:8px; align-items:flex-start}
+.tabs{display:flex; gap:7px; margin-bottom:16px; flex-wrap:wrap}
+.tab{border:1px solid var(--stroke-2); background:var(--card); border-radius:100px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; color:var(--dim); transition:.15s}
+.tab.on{background:var(--accent); color:#fff; border-color:var(--accent)}
+.trk-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px}
+.trk-head h1{font-family:'Bricolage Grotesque'; font-size:24px; font-weight:700; letter-spacing:-.5px}
+.trk-head .d{font-size:13px; color:var(--accent); font-weight:600}
+.pbar{height:8px; background:var(--card2); border-radius:100px; overflow:hidden; margin:10px 0 6px}
+.pbar i{display:block; height:100%; background:var(--accent); border-radius:100px; transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.remain{font-size:13.5px; color:var(--dim); margin-bottom:16px} .remain b{color:var(--ink)}
+.grid{display:grid; grid-template-columns:repeat(6,1fr); gap:7px; margin-bottom:16px}
+.cell{position:relative; aspect-ratio:1; border-radius:9px; background:var(--card2); border:1px solid var(--stroke); display:grid; place-items:center; font-size:11px; font-weight:600; color:var(--dimmer); overflow:hidden; transition:.35s}
+.cell.struck{background:var(--accent-soft); border-color:rgba(224,71,106,.4); color:var(--accent)}
+.cell.struck::after{content:""; position:absolute; left:12%; right:12%; height:2px; background:var(--accent); transform:rotate(-22deg); animation:strike .4s cubic-bezier(.2,.8,.2,1)}
+.cell.pop{animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+.start{width:100%; border:none; border-radius:100px; padding:16px; font-family:inherit; font-size:16px; font-weight:700; cursor:pointer; color:#fff; background:var(--accent); transition:.2s; box-shadow:0 10px 26px -12px var(--accent)}
+.start:hover{transform:translateY(-2px)} .start.is-done{background:var(--card2); color:var(--dim); box-shadow:none; cursor:default}
+.badges{display:flex; gap:8px; margin:18px 0 6px; justify-content:space-between}
+.bdg{flex:1; text-align:center; border:1px solid var(--stroke); border-radius:14px; padding:11px 4px; background:var(--card); opacity:.4; transition:.3s}
+.bdg.earned{opacity:1; border-color:var(--accent)}
+.bdg .ic{font-size:22px} .bdg .dy{font-size:10.5px; color:var(--dim); margin-top:3px; font-weight:600}
+.mtn{background:var(--good-soft); border:1px solid rgba(29,158,117,.35); border-radius:14px; padding:12px 14px; font-size:12.5px; line-height:1.45; margin:14px 0 6px}
+.mtn b{color:var(--good)}
+.simbtn{width:100%; border:1px solid var(--stroke-2); background:var(--card); border-radius:100px; padding:13px; font-family:inherit; font-size:14px; font-weight:600; color:var(--ink); cursor:pointer; margin-top:14px; display:flex; align-items:center; justify-content:center; gap:8px}
+.simbtn:hover{border-color:var(--accent)} .simbtn:disabled{opacity:.4; cursor:not-allowed}
 
-/* celebration */
-.cele h1{font-family:var(--disp); font-size:36px; font-weight:700; letter-spacing:-1px}
-.cele .emoji{font-size:74px; animation:pop .6s cubic-bezier(.2,1.4,.4,1)}
-.cele p{color:var(--dim); font-size:15px; max-width:260px}
-.confetti{position:absolute; top:-10px; width:9px; height:14px; border-radius:2px; opacity:.9;
-  animation:fall linear forwards}
-@keyframes fall{to{transform:translateY(900px) rotate(540deg); opacity:0}}
+/* ===== overlays ===== */
+.ov{position:absolute; inset:0; z-index:50; border-radius:44px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; padding:36px; background:var(--bg); opacity:0; pointer-events:none; transition:opacity .35s}
+.ov.show{opacity:1; pointer-events:auto}
+.ov.count{background:radial-gradient(circle at 50% 38%, var(--card), var(--bg) 75%)}
+.ovl-kicker{font-size:11px; font-weight:700; letter-spacing:3px; color:var(--dim); text-transform:uppercase}
+.count-num{font-family:'Bricolage Grotesque'; font-weight:800; font-size:160px; line-height:1; letter-spacing:-6px}
+.count-num.go{font-size:88px; color:var(--accent)}
+.count-num.anim{animation:tickIn .5s cubic-bezier(.2,.9,.3,1)}
+.ring{position:absolute; width:280px; height:280px; border-radius:50%; border:1px solid var(--stroke-2); animation:pulse 1s ease-out infinite}
+.focus-name{font-family:'Bricolage Grotesque'; font-size:30px; font-weight:700; letter-spacing:-1px; max-width:280px}
+.timer{font-size:50px; font-weight:300; font-variant-numeric:tabular-nums}
+.welcome{color:var(--accent); font-weight:600; font-size:14px; height:18px; opacity:0; transition:.3s} .welcome.show{opacity:1}
+.bigbtn{border:none; border-radius:100px; padding:15px 56px; font-family:inherit; font-size:16px; font-weight:700; color:#fff; background:var(--accent); cursor:pointer; transition:.2s} .bigbtn:hover{transform:translateY(-2px)}
+.bigbtn.alt{background:transparent; color:var(--dim); border:1px solid var(--stroke-2)}
+.emoji{font-size:70px; animation:pop .6s cubic-bezier(.2,1.4,.4,1)}
+.ov h1{font-family:'Bricolage Grotesque'; font-size:30px; font-weight:700; letter-spacing:-1px}
+.ov p{color:var(--dim); font-size:14.5px; max-width:270px; line-height:1.5}
+.confetti{position:absolute; top:-10px; width:9px; height:14px; border-radius:2px; animation:fall linear forwards}
 
-@keyframes rise{from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:none}}
+/* lock screen / nudge */
+.lock-time{font-family:'Bricolage Grotesque'; font-weight:500; font-size:62px; line-height:1; margin-top:-30px}
+.lock-date{font-size:14px; color:var(--dim); margin-bottom:30px}
+.nudge{width:100%; background:var(--card); border:1px solid var(--stroke); border-radius:20px; padding:14px; cursor:pointer; text-align:left; box-shadow:0 12px 30px -16px rgba(0,0,0,.4); transition:.25s}
+.nudge:hover{transform:scale(1.02)}
+.nudge-top{display:flex; gap:11px; align-items:center}
+.n-ic{width:36px;height:36px;border-radius:9px; background:var(--accent); color:#fff; display:grid; place-items:center; font-weight:700; font-size:11px; flex-shrink:0}
+.n-title{font-size:14px; font-weight:600} .n-time{margin-left:auto; font-size:11px; color:var(--dimmer)}
+.n-body{font-size:13.5px; color:var(--dim); margin-top:8px}
+.n-expand{margin-top:14px; border-top:1px solid var(--stroke); padding-top:14px; display:none}
+.nudge.open .n-expand{display:block; animation:rise .3s}
+.n-q{font-size:14px; font-weight:600; margin-bottom:12px}
+.n-actions{display:flex; gap:10px}
+.n-actions button{flex:1; border-radius:12px; padding:12px; font-family:inherit; font-weight:700; font-size:14px; cursor:pointer; border:none}
+.n-yes{background:var(--accent); color:#fff} .n-no{background:var(--card2); color:var(--ink)}
+.watchwrap{display:flex; flex-direction:column; align-items:center; gap:10px; padding-top:120px}
+.watch{width:128px; height:152px; border-radius:34px; background:#000; padding:10px; box-shadow:0 0 0 7px var(--bezel),0 24px 50px -18px rgba(0,0,0,.5)}
+.watch-scr{width:100%;height:100%; border-radius:26px; background:var(--bg); padding:11px; display:flex; flex-direction:column; justify-content:center; gap:5px}
+.watch .wt{font-size:9px; color:var(--accent); font-weight:700; display:flex; align-items:center; gap:4px}
+.watch .wb{font-size:12px; font-weight:600; line-height:1.2}
+.watch .ws{font-size:10px; color:var(--dim)}
+.buzz{animation:buzz .5s ease-in-out infinite}
+.watch-cap{font-size:12px; color:var(--dim)}
+
+/* shield (app block preview) */
+.shield{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; height:100%; text-align:center; padding:40px}
+.shield .s-ic{width:88px;height:88px;border-radius:24px; background:var(--accent-soft); border:1px solid rgba(224,71,106,.3); display:grid; place-items:center; font-size:42px}
+.shield h3{font-family:'Bricolage Grotesque'; font-size:24px; font-weight:700}
+.shield p{color:var(--dim); font-size:14px; max-width:240px; line-height:1.5}
+
+/* ===== demo controls ===== */
+.devbar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; max-width:540px; background:var(--card); border:1px solid var(--stroke); border-radius:16px; padding:12px 16px}
+.devbar .lab{font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--dimmer); width:100%; text-align:center; margin-bottom:2px}
+.devbar button{font-family:inherit; font-size:13px; font-weight:600; color:var(--ink); background:var(--bg); border:1px solid var(--stroke-2); border-radius:100px; padding:8px 14px; cursor:pointer; transition:.15s}
+.devbar button:hover{border-color:var(--accent)}
+.devbar .day{font-size:13px; color:var(--dim)} .devbar .day b{color:var(--accent-2)}
+.hint{font-size:12px; color:var(--dimmer); text-align:center; max-width:440px; line-height:1.5}
+.toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:var(--bg); padding:13px 20px; border-radius:100px; font-size:13.5px; font-weight:600; opacity:0; transition:.3s; z-index:999; pointer-events:none}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+@keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
 @keyframes strike{from{transform:rotate(-22deg) scaleX(0)} to{transform:rotate(-22deg) scaleX(1)}}
 @keyframes pop{0%{transform:scale(.5)} 60%{transform:scale(1.12)} 100%{transform:scale(1)}}
-
-/* ---------- prototype controls ---------- */
-.devbar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center;
-  max-width:520px; background:rgba(255,255,255,.03); border:1px solid var(--stroke);
-  border-radius:16px; padding:12px 16px}
-.devbar .lab{font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--dimmer);
-  width:100%; text-align:center; margin-bottom:2px}
-.devbar button{font-family:var(--body); font-size:13px; font-weight:600; color:var(--ink);
-  background:var(--card); border:1px solid var(--stroke-2); border-radius:100px; padding:8px 14px;
-  cursor:pointer; transition:.15s}
-.devbar button:hover{background:var(--card2); border-color:var(--accent)}
-.devbar .day{font-size:13px; color:var(--dim)}
-.devbar .day b{color:var(--accent-2)}
-.hint{font-size:12px; color:var(--dimmer); text-align:center; max-width:420px; line-height:1.5}
+@keyframes tickIn{0%{opacity:0; transform:scale(.4); filter:blur(6px)} 60%{opacity:1; filter:blur(0)} 100%{transform:scale(1)}}
+@keyframes pulse{0%{transform:scale(.7); opacity:.6} 100%{transform:scale(1.25); opacity:0}}
+@keyframes fall{to{transform:translateY(900px) rotate(540deg); opacity:0}}
+@keyframes buzz{0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)}}
 </style>
 </head>
 <body>
-<div class="wordmark">prototype · <b>5·4·3·2·1</b> habit tracker</div>
+<div class="wordmark">demo · <b>5·4·3·2·1</b> habit tracker</div>
 
-<div class="phone">
-  <div class="notch"></div>
-  <div class="screen">
-    <div class="statusbar">
-      <span id="clock">9:41</span>
-      <span class="dots">●●● ▽ 100%</span>
-    </div>
-    <div class="view" id="view"></div>
+<div class="stage">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="statusbar"><span>9:41</span><span>●●● ▽ 100%</span></div>
+      <div class="view" id="view"></div>
 
-    <!-- overlays -->
-    <div class="overlay" id="ovCount">
-      <div class="ring"></div>
-      <div class="ovl-kicker" id="countHabit">—</div>
-      <div class="count anim" id="countNum">5</div>
-    </div>
+      <!-- overlays -->
+      <div class="ov count" id="ovCount">
+        <div class="ring"></div>
+        <div class="ovl-kicker" id="countHabit">—</div>
+        <div class="count-num anim" id="countNum">5</div>
+      </div>
 
-    <div class="overlay" id="ovFocus">
-      <div class="ovl-kicker">Focus</div>
-      <div class="focus-name" id="focusName">—</div>
-      <div class="timer" id="focusTimer">00:00</div>
-      <div class="welcome" id="focusWelcome">Welcome back — finish it.</div>
-      <button class="done-btn" id="focusDone">Done</button>
-    </div>
+      <div class="ov" id="ovFocus">
+        <div class="ovl-kicker">Focus</div>
+        <div class="focus-name" id="focusName">—</div>
+        <div class="timer" id="focusTimer">00:00</div>
+        <div class="welcome" id="focusWelcome">Welcome back — finish it.</div>
+        <button class="bigbtn" id="focusDone">Done</button>
+      </div>
 
-    <div class="overlay cele" id="ovCele">
-      <div class="emoji">🎉</div>
-      <h1>It's a habit now.</h1>
-      <p id="celeText">30 days. You did it.</p>
-      <button class="done-btn" id="celeClose">Close</button>
+      <div class="ov" id="ovNudge">
+        <div class="ovl-kicker">Locked · now</div>
+        <div class="lock-time">10:00</div>
+        <div class="lock-date">Thursday, 19 June</div>
+        <div class="nudge" id="nudgeCard">
+          <div class="nudge-top">
+            <div class="n-ic">5·4·3</div>
+            <div class="n-title">5·4·3·2·1 — go.</div>
+            <div class="n-time">now</div>
+          </div>
+          <div class="n-body" id="nudgeBody">Time for: Read 10 pages</div>
+          <div class="n-expand">
+            <div class="n-q">Are you starting your habit right now?</div>
+            <div class="n-actions">
+              <button class="n-no" id="nudgeNo">Not yet</button>
+              <button class="n-yes" id="nudgeYes">Yes — let's go</button>
+            </div>
+          </div>
+        </div>
+        <button class="link" id="nudgeClose" style="color:var(--dim)">close preview</button>
+      </div>
+
+      <div class="ov" id="ovBadge">
+        <div class="emoji" id="badgeIcon">🔥</div>
+        <h1 id="badgeTitle">8-day spark</h1>
+        <p id="badgeText">You're past the hardest part.</p>
+        <button class="bigbtn" id="badgeShare">Share my progress</button>
+        <button class="link" id="badgeClose">keep going</button>
+      </div>
+
+      <div class="ov" id="ovCele">
+        <div class="emoji">🏆</div>
+        <h1>It's a habit now.</h1>
+        <p id="celeText">30 days done. You did it.</p>
+        <button class="bigbtn" id="celeContinue">Continue 365 days</button>
+        <button class="link" id="celeClose">I'm complete</button>
+      </div>
+
+      <div class="ov" id="ovShield">
+        <div class="shield">
+          <div class="s-ic">🛡️</div>
+          <h3 id="shieldApp">Instagram is blocked</h3>
+          <p>You're in a focus session. This app unlocks when you finish your habit today.</p>
+          <button class="bigbtn alt" id="shieldClose">Back to focus</button>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="watchwrap" id="watchWrap" style="display:none">
+    <div class="watch buzz">
+      <div class="watch-scr">
+        <div class="wt">⌚ now</div>
+        <div class="wb">5·4·3·2·1 — go.</div>
+        <div class="ws" id="watchBody">Read 10 pages</div>
+      </div>
+    </div>
+    <div class="watch-cap">taps your wrist</div>
   </div>
 </div>
 
 <div class="devbar">
-  <span class="lab">prototype controls — fast-forward time (the real app uses real days)</span>
+  <span class="lab">demo controls — the real app uses real days &amp; real notifications</span>
   <span class="day">Simulated day: <b id="simDay">1</b></span>
   <button id="skipDay">⏭ Skip a day (miss)</button>
-  <button id="reset">↺ Reset everything</button>
+  <button id="reset">↺ Restart demo</button>
 </div>
-<p class="hint">Tap <b>START</b> to run the 5·4·3·2·1 ritual and strike off a day. Use “Skip a day” to see the miss-penalty un-strike your last day. Switch browser tabs mid-focus to trigger the “welcome back” nudge.</p>
+<p class="hint">Run the onboarding, then on the 30-day page tap <b>START</b> or “Preview a notification” to try the full flow. Use “Skip a day” to see the miss-penalty and to fast-forward to badges, the halfway mark, and day 30.</p>
+<div class="toast" id="toast"></div>
 
 <script>
-const GOAL = 30;
-const MS_DAY = 86400000;
-const $ = s => document.querySelector(s);
+const GOAL=30, MS_DAY=86400000, $=s=>document.querySelector(s);
+const BADGES=[
+  {day:8,  ic:'🔥', name:'8-day spark',  text:"You're past the hardest part."},
+  {day:15, ic:'⚡', name:'Halfway — habit built', text:"Day 16 onward is just maintenance. The rest is keeping a routine you already own."},
+  {day:24, ic:'💎', name:'Locked in',    text:"This is routine territory now."},
+  {day:30, ic:'🏆', name:'Habit formed', text:"30 days. It's part of who you are."},
+];
+const APPS=[
+  {n:'Instagram', c:'#e1306c', e:'📷'},{n:'TikTok', c:'#000', e:'🎵'},
+  {n:'X', c:'#222', e:'𝕏'},{n:'YouTube', c:'#ff0000', e:'▶'},
+  {n:'Reddit', c:'#ff4500', e:'👽'},{n:'Snapchat', c:'#fffc00', e:'👻'},
+];
 
-// ---- persistent state ----
-const base = new Date(); base.setHours(0,0,0,0);
-let state = load() || { habits: [], offset: 0 };
-
-function load(){ try{ return JSON.parse(localStorage.getItem('p54321')); }catch(e){ return null; } }
-function save(){ localStorage.setItem('p54321', JSON.stringify(state)); }
-
-function simNow(){ return new Date(base.getTime() + state.offset*MS_DAY); }
+const base=new Date(); base.setHours(0,0,0,0);
+let state=load()||fresh();
+function fresh(){ return {onboarded:false, habits:[], notif:{startHour:8,endHour:22,every:1}, blocked:[], offset:0, selected:0, earned:{}}; }
+function load(){ try{return JSON.parse(localStorage.getItem('demo54321'));}catch(e){return null;} }
+function save(){ localStorage.setItem('demo54321', JSON.stringify(state)); }
+function simNow(){ return new Date(base.getTime()+state.offset*MS_DAY); }
 function key(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 
-// ---- the verified math (mirrors FiveSecondHabitCore.HabitProgress) ----
 function progress(h){
-  const now = simNow();
-  const start = new Date(h.start);
-  const todayKey = key(now);
-  const done = h.done.length;
-  // elapsed days [start, now): start inclusive, today excluded
-  let miss = 0, cur = new Date(start); cur.setHours(0,0,0,0);
-  const end = new Date(now); end.setHours(0,0,0,0);
-  while(cur < end){ if(!h.done.includes(key(cur))) miss++; cur = new Date(cur.getTime()+MS_DAY); }
-  const struck = Math.max(0, Math.min(GOAL, done - miss));
-  return { done, miss, struck, remaining: GOAL-struck, isDoneToday: h.done.includes(todayKey), isComplete: struck>=GOAL };
+  const now=simNow(), start=new Date(h.start);
+  const done=h.done.length;
+  let miss=0, cur=new Date(start); cur.setHours(0,0,0,0);
+  const end=new Date(now); end.setHours(0,0,0,0);
+  while(cur<end){ if(!h.done.includes(key(cur))) miss++; cur=new Date(cur.getTime()+MS_DAY); }
+  const goal=h.maintenance?365:GOAL;
+  const struck=Math.max(0,Math.min(goal, done-miss));
+  return {done,miss,struck,goal,remaining:goal-struck,isDoneToday:h.done.includes(key(now)),isComplete:struck>=goal};
 }
 
-// ---- rendering ----
-function render(){
-  $('#simDay').textContent = state.offset + 1;
-  const view = $('#view');
-  if(state.habits.length === 0){ view.innerHTML = onboarding(); wireOnboarding(); return; }
-  const canAdd = state.habits.length < 3;
-  view.innerHTML = `
-    <div class="home-head">
-      <h1>5<i>·</i>4<i>·</i>3<i>·</i>2<i>·</i>1</h1>
-      <button class="add-btn" id="addBtn" ${canAdd?'':'disabled'}>+</button>
-    </div>
-    ${state.habits.map((h,i)=>card(h,i)).join('')}
-    ${canAdd?'':'<p class="cap-note">3-habit max — focus beats more.</p>'}
-  `;
-  state.habits.forEach((h,i)=>{
-    $('#start-'+i).onclick = ()=>{ if(!progress(h).isDoneToday) startRitual(i); };
-  });
-  if(canAdd) $('#addBtn').onclick = ()=> addHabit();
+/* ============ ONBOARDING ============ */
+let ob=null;
+function startOnboarding(){ ob={step:0, habits:[], draftMins:30, notif:{startHour:8,endHour:22,every:1,custom:false}, blocked:[]}; render(); }
+const OB_STEPS=4;
+
+function obProgressBar(){ return `<div class="ob-prog"><i style="width:${(ob.step)/OB_STEPS*100}%"></i></div>`; }
+function capFor(n){ return ({1:120,2:90,3:180})[n]||180; }
+
+function renderOnboarding(){
+  const v=$('#view');
+  if(ob.step===0){
+    v.innerHTML=obProgressBar()+`
+      <span class="step-eyebrow">Step 1 of 4 · the rule</span>
+      <h2 class="q">Start with one thing.</h2>
+      <p class="lead">One habit, done daily, is how a routine actually sticks. Only add a 2nd or 3rd if they're <b>interlinked</b> and feed the same “hero” habit.</p>
+      <div class="eg good"><div class="h">✓ works — parallel habits</div><div class="d">Read → Write → Publish a post daily. Or: Gym → Cook protein → Cook at home.</div></div>
+      <div class="eg bad"><div class="h">✕ too scattered</div><div class="d">Gym + Learn a language + 2 hrs with family. Different worlds — you'll burn out.</div></div>
+      <button class="btn" onclick="ob.step=1;render()">Got it — add my habit</button>`;
+    return;
+  }
+  if(ob.step===1){
+    const total=ob.habits.reduce((s,h)=>s+h.mins,0);
+    const cap=capFor(Math.max(1,ob.habits.length));
+    const over=ob.habits.length>0 && total>cap;
+    v.innerHTML=obProgressBar()+`
+      <span class="step-eyebrow">Step 2 of 4 · your habits (max 3)</span>
+      <h2 class="q">What are you locking in?</h2>
+      <p class="lead">Name it, then set how long it takes daily. Keep it small — incremental steps win.</p>
+      <input class="field" id="hName" placeholder="e.g. Read 10 pages" maxlength="40" ${ob.habits.length>=3?'disabled':''}>
+      <div class="lbl"><span>Daily time</span><b id="minsOut">${ob.draftMins} min</b></div>
+      <input type="range" id="mins" min="5" max="120" step="5" value="${ob.draftMins}" ${ob.habits.length>=3?'disabled':''}>
+      <button class="btn ghost" id="addHabit" ${ob.habits.length>=3?'disabled':''} style="margin-top:10px">+ Add habit</button>
+      ${ob.habits.map((h,i)=>`<div class="added"><span class="nm">${esc(h.name)}</span><span class="mins">${h.mins} min</span><span class="x" onclick="ob.habits.splice(${i},1);render()">×</span></div>`).join('')}
+      ${ob.habits.length?`<div class="note">Daily total: <b>${fmtH(total)}</b> across ${ob.habits.length} habit${ob.habits.length>1?'s':''}. Suggested cap: <b>${fmtH(cap)}</b>.</div>`:''}
+      ${over?`<div class="warn">⚠️ Beyond ~${fmtH(cap)}/day with ${ob.habits.length} habits gets hard to sustain. Consider trimming — small and steady beats ambitious and abandoned.</div>`:''}
+      ${ob.habits.length>=3?`<div class="note"><b>3 is the max.</b> Three only works if they're interlinked. Otherwise stop at one.</div>`:''}
+      <button class="btn" id="obNext1" ${ob.habits.length?'':'disabled'}>Continue</button>`;
+    const mins=$('#mins'), out=$('#minsOut');
+    if(mins) mins.oninput=()=>{ ob.draftMins=+mins.value; out.textContent=ob.draftMins+' min'; };
+    const add=$('#addHabit');
+    if(add) add.onclick=()=>{ const nm=$('#hName').value.trim(); if(!nm) {toast('Name your habit first');return;} if(ob.habits.length>=3) return;
+      ob.habits.push({name:nm, mins:ob.draftMins}); ob.draftMins=30; render(); };
+    const next=$('#obNext1'); if(next) next.onclick=()=>{ ob.step=2; render(); };
+    return;
+  }
+  if(ob.step===2){
+    const n=ob.notif;
+    v.innerHTML=obProgressBar()+`
+      <span class="step-eyebrow">Step 3 of 4 · reminders</span>
+      <h2 class="q">How often should we nudge you?</h2>
+      <p class="lead">Pick a window and a cadence. Reminders fire on repeat <b>until you complete your habit</b> that day.</p>
+      <div class="lbl"><span>Active hours</span></div>
+      <div class="choices" style="margin-bottom:4px">
+        <div class="choice ${!n.custom?'sel':''}" onclick="ob.notif.custom=false;render()"><div class="r"></div><div><div class="ct">Daytime · 8am – 10pm</div><div class="cs">the default for most people</div></div></div>
+        <div class="choice ${n.custom?'sel':''}" onclick="ob.notif.custom=true;render()"><div class="r"></div><div><div class="ct">Custom window</div><div class="cs">night shift, early riser, etc.</div></div></div>
+      </div>
+      ${n.custom?`<div class="times"><input class="field" id="sH" type="number" min="0" max="23" value="${n.startHour}"><input class="field" id="eH" type="number" min="0" max="23" value="${n.endHour}"></div><div class="cs" style="font-size:11.5px;color:var(--dimmer);margin-top:6px;text-align:center">start hour → end hour (24h)</div>`:''}
+      <div class="lbl" style="margin-top:18px"><span>Cadence</span></div>
+      <div class="choices">
+        <div class="choice ${n.every===1?'sel':''}" onclick="ob.notif.every=1;render()"><div class="r"></div><div><div class="ct">Every hour</div><div class="cs">most persistent</div></div></div>
+        <div class="choice ${n.every===3?'sel':''}" onclick="ob.notif.every=3;render()"><div class="r"></div><div><div class="ct">Every 3 hours</div><div class="cs">balanced</div></div></div>
+        <div class="choice ${n.every===4?'sel':''}" onclick="ob.notif.every=4;render()"><div class="r"></div><div><div class="ct">Every 4 hours</div><div class="cs">gentlest — the max gap</div></div></div>
+      </div>
+      <div class="note">🔔 <b>Reminders keep coming until you complete your habit</b> for the day. The moment you finish, they go quiet till tomorrow.</div>
+      <button class="btn" onclick="saveCustom();ob.step=3;render()">Continue</button>`;
+    return;
+  }
+  if(ob.step===3){
+    v.innerHTML=obProgressBar()+`
+      <span class="step-eyebrow">Step 4 of 4 · focus shield</span>
+      <h2 class="q">Block distractions while you do it?</h2>
+      <p class="lead">Pick apps to shield during your focus session. Music, calls and maps stay open — only these get locked.</p>
+      <div class="applist">
+        ${APPS.map((a,i)=>`<div class="appitem ${ob.blocked.includes(a.n)?'sel':''}" onclick="toggleApp('${a.n}')">
+          <div class="appicon" style="background:${a.c}">${a.e}</div><div class="an">${a.n}</div>
+          <div class="chk">${ob.blocked.includes(a.n)?'✓':''}</div></div>`).join('')}
+      </div>
+      <button class="link" id="previewBlock">▶ Preview how a blocked app looks</button>
+      <div class="note">In the real app this uses iOS Screen Time. ${ob.blocked.length?`<b>${ob.blocked.length} app${ob.blocked.length>1?'s':''}</b> will lock during focus.`:'Nothing selected — you can add this later.'}</div>
+      <button class="btn" onclick="finishOnboarding()">Start my 30 days</button>`;
+    const pv=$('#previewBlock'); pv.onclick=()=>showShield(ob.blocked[0]||'Instagram');
+    return;
+  }
+}
+function saveCustom(){ const s=$('#sH'),e=$('#eH'); if(s&&e){ ob.notif.startHour=clamp(+s.value,0,23); ob.notif.endHour=clamp(+e.value,0,23); } }
+window.toggleApp=n=>{ const i=ob.blocked.indexOf(n); if(i<0) ob.blocked.push(n); else ob.blocked.splice(i,1); render(); };
+function finishOnboarding(){
+  saveCustom();
+  state.habits=ob.habits.map(h=>({name:h.name, mins:h.mins, start:simNow().toISOString(), done:[], maintenance:false}));
+  state.notif={startHour:ob.notif.startHour,endHour:ob.notif.endHour,every:ob.notif.every};
+  state.blocked=ob.blocked.slice(); state.onboarded=true; state.selected=0; state.earned={};
+  ob=null; save(); render();
 }
 
-function card(h,i){
-  const p = progress(h);
-  const cells = Array.from({length:GOAL},(_,d)=>{
-    const n=d+1; const struck = n<=p.struck;
-    return `<div class="cell ${struck?'struck':''}" data-h="${i}" data-d="${n}">${n}</div>`;
-  }).join('');
-  return `<div class="card" style="animation-delay:${i*70}ms">
-    <div class="card-top">
-      <h2>${escapeHtml(h.name)}</h2>
-      <span class="badge ${p.isDoneToday?'done':''}">${p.isDoneToday?'Done today ✓':(p.isComplete?'Complete':'Day '+(p.struck+1))}</span>
-    </div>
-    <div class="remain">${p.isComplete?'<b>It’s a habit. 🎉</b>':'<b>'+p.remaining+'</b> more days to become a habit'}</div>
-    <div class="grid">${cells}</div>
-    <button class="start ${p.isDoneToday||p.isComplete?'is-done':''}" id="start-${i}">
-      ${p.isComplete?'Complete ✓':(p.isDoneToday?'Done for today':'5·4·3·2·1 — START')}
-    </button>
-  </div>`;
+/* ============ TRACKER ============ */
+function renderTracker(){
+  const v=$('#view'); const i=state.selected; const h=state.habits[i]; const p=progress(h);
+  const cadence = state.notif.every===1?'every hour':`every ${state.notif.every} hours`;
+  const win = `${state.notif.startHour}:00–${state.notif.endHour}:00`;
+  let grid='';
+  if(h.maintenance){
+    grid=`<div class="mtn">✓ <b>Habit formed.</b> You're now maintaining it — day ${p.struck} of 365.</div>`;
+  } else {
+    grid=`<div class="grid">${Array.from({length:GOAL},(_,d)=>{const n=d+1;const s=n<=p.struck;return `<div class="cell ${s?'struck':''}" data-d="${n}">${n}</div>`;}).join('')}</div>`;
+  }
+  v.innerHTML=`
+    <div class="warnbar">⚠️ <span>Miss a day and your progress drops by one. Show up daily — the streak only grows when you do.</span></div>
+    ${state.habits.length>1?`<div class="tabs">${state.habits.map((hh,j)=>`<div class="tab ${j===i?'on':''}" onclick="state.selected=${j};save();render()">${esc(hh.name)}</div>`).join('')}</div>`:''}
+    <div class="trk-head"><h1>${esc(h.name)}</h1><span class="d">${p.isComplete?'Complete':'Day '+(p.struck+ (p.isDoneToday?0:1))}</span></div>
+    <div class="pbar"><i style="width:${p.struck/p.goal*100}%"></i></div>
+    <div class="remain"><b>${p.struck}</b> of ${p.goal} days done · ${p.isComplete?'🎉 done!':'<b>'+p.remaining+'</b> to go'}</div>
+    ${grid}
+    <button class="start ${p.isDoneToday||p.isComplete?'is-done':''}" id="startBtn">
+      ${p.isComplete?'Complete ✓':(p.isDoneToday?'Done for today ✓':'5·4·3·2·1 — START')}</button>
+    ${h.maintenance?'':`<div class="badges">${BADGES.map(b=>`<div class="bdg ${p.struck>=b.day?'earned':''}"><div class="ic">${b.ic}</div><div class="dy">Day ${b.day}</div></div>`).join('')}</div>`}
+    ${(!h.maintenance && p.struck>=15 && p.struck<30)?`<div class="mtn">⚡ <b>Halfway — the habit is built.</b> Day 16+ is maintenance. Keep showing up.</div>`:''}
+    <button class="simbtn" id="simBtn" ${p.isDoneToday?'disabled':''}>🔔 ${p.isDoneToday?'All done — nudges off today':'Preview a notification'}</button>
+    <div class="note" style="margin-top:12px">Reminders: <b>${cadence}</b>, ${win}. They stop the moment you finish.</div>`;
+  $('#startBtn').onclick=()=>{ if(!p.isDoneToday && !p.isComplete) startRitual(i); };
+  $('#simBtn').onclick=()=>{ if(!p.isDoneToday) showNudge(i); };
 }
 
-function onboarding(){
-  return `<div class="ob">
-    <span class="kicker">One thing at a time</span>
-    <h1>Pick one thing.<br>Start in 5 seconds.</h1>
-    <p>Name your first habit. 30 days till it sticks.</p>
-    <input class="field" id="obName" placeholder="e.g. Read 10 pages" maxlength="40">
-    <button class="primary" id="obBegin" disabled>Begin</button>
-    <div class="locked">
-      <span class="lk">🔒</span>
-      <div><div class="t1">Block distracting apps</div>
-        <div class="t2">Shield Instagram &amp; co. during focus.</div></div>
-      <span class="pill">UPGRADE</span>
-    </div>
-  </div>`;
-}
-function wireOnboarding(){
-  const inp=$('#obName'), btn=$('#obBegin');
-  inp.oninput=()=> btn.disabled = inp.value.trim()==='';
-  inp.focus();
-  btn.onclick=()=>{ if(inp.value.trim()){ createHabit(inp.value.trim()); } };
-}
-
-function addHabit(){
-  const name = prompt('New habit name:');
-  if(name && name.trim()) createHabit(name.trim());
-}
-function createHabit(name){
-  if(state.habits.length>=3) return;
-  state.habits.push({ name, start: simNow().toISOString(), done: [] });
-  save(); render();
-}
-
-// ---- the ritual ----
-let timerInt=null, leftDuring=false, activeIdx=null;
+/* ============ RITUAL ============ */
+let timerInt=null, leftDuring=false, activeIdx=0;
 function startRitual(i){
   activeIdx=i; const h=state.habits[i];
-  $('#countHabit').textContent = h.name.toUpperCase();
-  const ov=$('#ovCount'), num=$('#countNum'); ov.classList.add('show');
-  let n=5; num.textContent=n; num.className='count anim'; void num.offsetWidth; num.className='count anim';
-  buzz();
-  const step=()=>{
-    n--;
-    if(n>=1){ num.textContent=n; num.classList.remove('anim'); void num.offsetWidth; num.classList.add('anim'); buzz();
-      setTimeout(step,1000); }
-    else { num.textContent='GO.'; num.className='count go anim'; buzz(); $('#ovCount').querySelector('.ring').style.display='none';
-      setTimeout(()=>{ ov.classList.remove('show'); $('#ovCount').querySelector('.ring').style.display=''; openFocus(i); }, 950); }
-  };
+  $('#countHabit').textContent=h.name.toUpperCase();
+  const ov=$('#ovCount'), num=$('#countNum'); ov.classList.add('show'); $('.ring').style.display='';
+  let n=5; num.textContent=n; num.className='count-num anim'; buzz();
+  const step=()=>{ n--;
+    if(n>=1){ num.textContent=n; num.className='count-num anim'; buzz(); setTimeout(step,1000); }
+    else { num.textContent='GO.'; num.className='count-num go anim'; buzz(); $('.ring').style.display='none';
+      setTimeout(()=>{ ov.classList.remove('show'); openFocus(i); },950); } };
   setTimeout(step,1000);
 }
 function openFocus(i){
   const h=state.habits[i]; leftDuring=false;
-  $('#focusName').textContent=h.name; $('#focusWelcome').classList.remove('show');
-  $('#focusTimer').textContent='00:00';
+  $('#focusName').textContent=h.name; $('#focusWelcome').classList.remove('show'); $('#focusTimer').textContent='00:00';
   let s=0; clearInterval(timerInt);
-  timerInt=setInterval(()=>{ s++; $('#focusTimer').textContent=
-    `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; },1000);
+  timerInt=setInterval(()=>{ s++; $('#focusTimer').textContent=`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; },1000);
   $('#ovFocus').classList.add('show');
 }
 $('#focusDone').onclick=()=>{
   clearInterval(timerInt);
-  const h=state.habits[activeIdx]; const k=key(simNow());
+  const h=state.habits[activeIdx], before=progress(h).struck, k=key(simNow());
   if(!h.done.includes(k)) h.done.push(k);
-  save(); $('#ovFocus').classList.remove('show'); buzzDone();
-  render();
-  // pop the newly struck cell
+  save(); $('#ovFocus').classList.remove('show'); buzzDone(); render();
   const p=progress(h);
-  const cell=document.querySelector(`.cell[data-h="${activeIdx}"][data-d="${p.struck}"]`);
-  if(cell) cell.classList.add('pop');
-  if(p.isComplete) setTimeout(()=>celebrate(h.name), 450);
+  const cell=document.querySelector(`.cell[data-d="${p.struck}"]`); if(cell) cell.classList.add('pop');
+  setTimeout(()=>checkRewards(activeIdx, before, p.struck), 480);
 };
 
-// leave-during-focus detection
-document.addEventListener('visibilitychange', ()=>{
-  if(document.hidden && $('#ovFocus').classList.contains('show')){ leftDuring=true; }
-  else if(!document.hidden && leftDuring && $('#ovFocus').classList.contains('show')){
-    $('#focusWelcome').classList.add('show');
+/* ============ REWARDS ============ */
+function checkRewards(idx, before, after){
+  const h=state.habits[idx];
+  state.earned[idx]=state.earned[idx]||[];
+  if(after>=GOAL && !h.maintenance){ celebrate(h.name); return; }
+  for(const b of BADGES){
+    if(after>=b.day && before<b.day && !state.earned[idx].includes(b.day) && b.day<30){
+      state.earned[idx].push(b.day); save(); showBadge(b); return;
+    }
   }
-});
-
-function celebrate(name){
-  $('#celeText').textContent = `30 days of ${name}. You did it.`;
-  const ov=$('#ovCele'); ov.classList.add('show');
-  const colors=['#ff6f91','#ffd07a','#f5f3f7','#ff9eb5'];
-  for(let i=0;i<60;i++){ const c=document.createElement('div'); c.className='confetti';
-    c.style.left=Math.random()*100+'%'; c.style.background=colors[i%4];
-    c.style.animationDuration=(2+Math.random()*2)+'s'; c.style.animationDelay=Math.random()*0.6+'s';
-    ov.appendChild(c); setTimeout(()=>c.remove(),4200); }
 }
-$('#celeClose').onclick=()=> $('#ovCele').classList.remove('show');
+function showBadge(b){
+  $('#badgeIcon').textContent=b.ic; $('#badgeTitle').textContent=b.name; $('#badgeText').textContent=b.text;
+  $('#ovBadge').classList.add('show');
+}
+$('#badgeClose').onclick=()=>$('#ovBadge').classList.remove('show');
+$('#badgeShare').onclick=()=>{ doShare($('#badgeTitle').textContent); };
+function celebrate(name){
+  $('#celeText').textContent=`30 days of ${name}. It's part of who you are now.`;
+  const ov=$('#ovCele'); ov.classList.add('show');
+  const cols=['#e0476a','#ffd07a','#5dcaa5','#ff9eb5'];
+  for(let i=0;i<70;i++){ const c=document.createElement('div'); c.className='confetti'; c.style.left=Math.random()*100+'%';
+    c.style.background=cols[i%4]; c.style.animationDuration=(2+Math.random()*2)+'s'; c.style.animationDelay=Math.random()*0.6+'s';
+    ov.appendChild(c); setTimeout(()=>c.remove(),4400); }
+}
+$('#celeClose').onclick=()=>$('#ovCele').classList.remove('show');
+$('#celeContinue').onclick=()=>{ const h=state.habits[activeIdx]; h.maintenance=true; save(); $('#ovCele').classList.remove('show'); render(); toast('Maintenance mode on — 365 days'); };
 
-// haptics-ish (vibrate where supported)
+/* ============ NOTIFICATION FLOW ============ */
+function showNudge(i){
+  activeIdx=i; const h=state.habits[i];
+  $('#nudgeBody').textContent='Time for: '+h.name;
+  $('#watchBody').textContent=h.name;
+  $('#nudgeCard').classList.remove('open');
+  $('#ovNudge').classList.add('show');
+  $('#watchWrap').style.display='flex';
+  buzz();
+}
+$('#nudgeCard').onclick=e=>{ if(e.target.closest('.n-actions')) return; $('#nudgeCard').classList.add('open'); };
+$('#nudgeYes').onclick=()=>{ closeNudge(); startRitual(activeIdx); };
+$('#nudgeNo').onclick=()=>{ closeNudge(); const every=state.notif.every; toast(`Okay — I'll check in in ${every} hour${every>1?'s':''}.`); };
+$('#nudgeClose').onclick=closeNudge;
+function closeNudge(){ $('#ovNudge').classList.remove('show'); $('#watchWrap').style.display='none'; }
+
+/* ============ SHIELD ============ */
+function showShield(app){ $('#shieldApp').textContent=app+' is blocked'; $('#ovShield').classList.add('show'); }
+$('#shieldClose').onclick=()=>$('#ovShield').classList.remove('show');
+
+/* ============ helpers ============ */
+function render(){ $('#simDay').textContent=state.offset+1;
+  if(!state.onboarded){ if(!ob) startOnboarding(); else renderOnboarding(); }
+  else renderTracker(); }
+function esc(s){ return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtH(m){ const h=m/60; return h===Math.floor(h)?h+'h':h.toFixed(1)+'h'; }
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
 function buzz(){ if(navigator.vibrate) navigator.vibrate(18); }
 function buzzDone(){ if(navigator.vibrate) navigator.vibrate([30,40,60]); }
+let toastT=null;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600); }
+function doShare(txt){ const m=`I just hit "${txt}" on my 5·4·3·2·1 habit tracker 🔥`;
+  if(navigator.share){ navigator.share({text:m}).catch(()=>{}); } else { toast('Shared! (demo)'); } }
 
-// ---- prototype controls ----
 $('#skipDay').onclick=()=>{ state.offset++; save(); render(); };
-$('#reset').onclick=()=>{ if(confirm('Reset all habits and progress?')){ state={habits:[],offset:0}; save(); render(); } };
-
-function escapeHtml(s){ return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+$('#reset').onclick=()=>{ if(confirm('Restart the whole demo?')){ state=fresh(); ob=null; save(); render(); } };
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden && $('#ovFocus').classList.contains('show')) leftDuring=true;
+  else if(!document.hidden && leftDuring && $('#ovFocus').classList.contains('show')) $('#focusWelcome').classList.add('show');
+});
 
 render();
 </script>

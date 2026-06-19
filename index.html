@@ -352,7 +352,7 @@ function renderOnboarding(){
       <input class="field" id="hName" placeholder="e.g. Read 10 pages" maxlength="40" ${ob.habits.length>=3?'disabled':''}>
       <div class="lbl"><span>Daily time</span><b id="minsOut">${ob.draftMins} min</b></div>
       <input type="range" id="mins" min="5" max="120" step="5" value="${ob.draftMins}" ${ob.habits.length>=3?'disabled':''}>
-      <button class="btn ghost" id="addHabit" ${ob.habits.length>=3?'disabled':''} style="margin-top:10px">+ Add habit</button>
+      <button class="btn ghost" id="addHabit" ${ob.habits.length>=3?'disabled':''} style="margin-top:10px">+ Add ${ob.habits.length?'another habit':'habit'}</button>
       ${ob.habits.map((h,i)=>`<div class="added"><span class="nm">${esc(h.name)}</span><span class="mins">${h.mins} min</span><span class="x" onclick="ob.habits.splice(${i},1);render()">×</span></div>`).join('')}
       ${ob.habits.length?`<div class="note">Daily total: <b>${fmtH(total)}</b> across ${ob.habits.length} habit${ob.habits.length>1?'s':''}. Suggested cap: <b>${fmtH(cap)}</b>.</div>`:''}
       ${over?`<div class="warn">⚠️ Beyond ~${fmtH(cap)}/day with ${ob.habits.length} habits gets hard to sustain. Consider trimming — small and steady beats ambitious and abandoned.</div>`:''}
@@ -377,7 +377,10 @@ function renderOnboarding(){
         <div class="choice ${!n.custom?'sel':''}" onclick="ob.notif.custom=false;render()"><div class="r"></div><div><div class="ct">Daytime · 8am – 10pm</div><div class="cs">the default for most people</div></div></div>
         <div class="choice ${n.custom?'sel':''}" onclick="ob.notif.custom=true;render()"><div class="r"></div><div><div class="ct">Custom window</div><div class="cs">night shift, early riser, etc.</div></div></div>
       </div>
-      ${n.custom?`<div class="times"><input class="field" id="sH" type="number" min="0" max="23" value="${n.startHour}"><input class="field" id="eH" type="number" min="0" max="23" value="${n.endHour}"></div><div class="cs" style="font-size:11.5px;color:var(--dimmer);margin-top:6px;text-align:center">start hour → end hour (24h)</div>`:''}
+      ${n.custom?`<div class="times">
+        <div style="flex:1"><div style="font-size:11px;color:var(--dim);font-weight:600;margin:0 0 5px 4px">From</div><input class="field" id="sH" type="time" value="${String(n.startHour).padStart(2,'0')}:00"></div>
+        <div style="flex:1"><div style="font-size:11px;color:var(--dim);font-weight:600;margin:0 0 5px 4px">To</div><input class="field" id="eH" type="time" value="${String(n.endHour).padStart(2,'0')}:00"></div>
+      </div>`:''}
       <div class="lbl" style="margin-top:18px"><span>Cadence you want to be notified</span></div>
       <div class="choices">
         <div class="choice ${n.every===1?'sel':''}" onclick="ob.notif.every=1;render()"><div class="r"></div><div><div class="ct">Every hour</div><div class="cs">most persistent</div></div></div>
@@ -392,7 +395,8 @@ function renderOnboarding(){
     v.innerHTML=obProgressBar()+`
       <span class="step-eyebrow">Step 4 of 4 · focus shield</span>
       <h2 class="q">Block distractions while you do it?</h2>
-      <p class="lead">Pick apps to shield during your focus session. Music, calls and maps stay open — only these get locked.</p>
+      <p class="lead">Music, calls and maps stay open — only the apps you pick get locked during your focus session.</p>
+      <div class="lbl"><span>Choose apps</span></div>
       <div class="applist">
         ${APPS.map((a,i)=>`<div class="appitem ${ob.blocked.includes(a.n)?'sel':''}" onclick="toggleApp('${a.n}')">
           <div class="appicon" style="background:${a.c}">${a.e}</div><div class="an">${a.n}</div>
@@ -405,7 +409,7 @@ function renderOnboarding(){
     return;
   }
 }
-function saveCustom(){ const s=$('#sH'),e=$('#eH'); if(s&&e){ ob.notif.startHour=clamp(+s.value,0,23); ob.notif.endHour=clamp(+e.value,0,23); } }
+function saveCustom(){ const s=$('#sH'),e=$('#eH'); const ph=v=>clamp(parseInt((v||'0').split(':')[0],10)||0,0,23); if(s&&e){ ob.notif.startHour=ph(s.value); ob.notif.endHour=ph(e.value); } }
 window.toggleApp=n=>{ const i=ob.blocked.indexOf(n); if(i<0) ob.blocked.push(n); else ob.blocked.splice(i,1); render(); };
 function finishOnboarding(){
   saveCustom();

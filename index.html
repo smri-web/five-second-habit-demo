@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>5·4·3·2·1 — habit tracker demo</title>
+<title>5·4·3·2·1 habit tracker demo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ===== system light/dark ===== */
 :root{
@@ -29,14 +29,14 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{
-  font-family:'Hanken Grotesk',sans-serif; background:var(--bg); color:var(--ink);
+  font-family:'Inter',sans-serif; background:var(--bg); color:var(--ink);
   min-height:100vh; display:flex; flex-direction:column; align-items:center;
   justify-content:flex-start; gap:20px; padding:34px 16px 60px;
   background-image:
     radial-gradient(55% 45% at 16% 6%, var(--accent-soft), transparent 60%),
     radial-gradient(45% 40% at 88% 96%, rgba(201,138,18,.10), transparent 60%);
 }
-.wordmark{font-family:'Bricolage Grotesque'; font-weight:600; letter-spacing:-.4px; font-size:14px; color:var(--dim)}
+.wordmark{font-family:'Inter'; font-weight:600; letter-spacing:-.4px; font-size:14px; color:var(--dim)}
 .wordmark b{color:var(--accent)}
 
 /* ===== phone ===== */
@@ -54,7 +54,7 @@ body{
 .ob-prog{height:5px; background:var(--card2); border-radius:100px; margin:8px 2px 20px; overflow:hidden}
 .ob-prog i{display:block; height:100%; background:var(--accent); border-radius:100px; transition:width .4s cubic-bezier(.2,.8,.2,1)}
 .step-eyebrow{font-size:11px; font-weight:700; letter-spacing:2px; color:var(--accent); text-transform:uppercase}
-h2.q{font-family:'Bricolage Grotesque'; font-size:27px; line-height:1.08; font-weight:700; letter-spacing:-1px; margin:8px 0 6px}
+h2.q{font-family:'Inter'; font-size:27px; line-height:1.08; font-weight:700; letter-spacing:-1px; margin:8px 0 6px}
 .lead{color:var(--dim); font-size:14.5px; line-height:1.55; margin-bottom:16px}
 .eg{border:1px solid var(--stroke); border-radius:16px; padding:13px 15px; margin-bottom:10px; background:var(--card)}
 .eg.good{border-color:rgba(29,158,117,.4)} .eg.bad{border-color:rgba(224,71,106,.35)}
@@ -102,9 +102,9 @@ input[type=range]{width:100%; accent-color:var(--accent); height:26px}
 .tab{border:1px solid var(--stroke-2); background:var(--card); border-radius:100px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; color:var(--dim); transition:.15s}
 .tab.on{background:var(--accent); color:#fff; border-color:var(--accent)}
 .trk-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px}
-.trk-head h1{font-family:'Bricolage Grotesque'; font-size:24px; font-weight:700; letter-spacing:-.5px}
+.trk-head h1{font-family:'Inter'; font-size:24px; font-weight:700; letter-spacing:-.5px}
 .habit-pick{position:relative; display:inline-flex; align-items:center; gap:6px; max-width:72%}
-.habit-pick select{appearance:none; -webkit-appearance:none; background:transparent; border:none; font-family:'Bricolage Grotesque'; font-size:23px; font-weight:700; letter-spacing:-.5px; color:var(--ink); cursor:pointer; padding:0; max-width:100%; text-overflow:ellipsis}
+.habit-pick select{appearance:none; -webkit-appearance:none; background:transparent; border:none; font-family:'Inter'; font-size:23px; font-weight:700; letter-spacing:-.5px; color:var(--ink); cursor:pointer; padding:0; max-width:100%; text-overflow:ellipsis}
 .habit-pick .chev{color:var(--accent); font-size:15px; pointer-events:none; flex-shrink:0}
 .mobile-only{display:none}
 .trk-head .d{font-size:13px; color:var(--accent); font-weight:600}
@@ -132,23 +132,23 @@ input[type=range]{width:100%; accent-color:var(--accent); height:26px}
 .ov.show{opacity:1; pointer-events:auto}
 .ov.count{background:radial-gradient(circle at 50% 38%, var(--card), var(--bg) 75%)}
 .ovl-kicker{font-size:11px; font-weight:700; letter-spacing:3px; color:var(--dim); text-transform:uppercase}
-.count-num{font-family:'Bricolage Grotesque'; font-weight:800; font-size:160px; line-height:1; letter-spacing:-6px}
+.count-num{font-family:'Inter'; font-weight:800; font-size:160px; line-height:1; letter-spacing:-6px}
 .count-num.go{font-size:88px; color:var(--accent)}
 .count-num.anim{animation:tickIn .5s cubic-bezier(.2,.9,.3,1)}
 .ring{position:absolute; width:280px; height:280px; border-radius:50%; border:1px solid var(--stroke-2); animation:pulse 1s ease-out infinite}
-.focus-name{font-family:'Bricolage Grotesque'; font-size:30px; font-weight:700; letter-spacing:-1px; max-width:280px}
+.focus-name{font-family:'Inter'; font-size:30px; font-weight:700; letter-spacing:-1px; max-width:280px}
 .timer{font-size:50px; font-weight:300; font-variant-numeric:tabular-nums}
 .welcome{color:var(--accent); font-weight:600; font-size:14px; height:18px; opacity:0; transition:.3s} .welcome.show{opacity:1}
 .bigbtn{border:none; border-radius:100px; padding:15px 56px; font-family:inherit; font-size:16px; font-weight:700; color:#fff; background:var(--accent); cursor:pointer; transition:.2s} .bigbtn:hover{transform:translateY(-2px)}
 .bigbtn.alt{background:transparent; color:var(--dim); border:1px solid var(--stroke-2)}
 .emoji{font-size:70px; animation:pop .6s cubic-bezier(.2,1.4,.4,1)}
-.ov h1{font-family:'Bricolage Grotesque'; font-size:30px; font-weight:700; letter-spacing:-1px}
+.ov h1{font-family:'Inter'; font-size:30px; font-weight:700; letter-spacing:-1px}
 .ov p{color:var(--dim); font-size:14.5px; max-width:270px; line-height:1.5}
 .confetti{position:absolute; top:-10px; width:9px; height:14px; border-radius:2px; animation:fall linear forwards}
 
 /* lock screen / nudge */
 #ovNudge{justify-content:flex-start; padding-top:74px}
-.lock-time{font-family:'Bricolage Grotesque'; font-weight:500; font-size:60px; line-height:1}
+.lock-time{font-family:'Inter'; font-weight:500; font-size:60px; line-height:1}
 .lock-date{font-size:14px; color:var(--dim); margin-bottom:40px}
 .nudge{width:100%; background:var(--card); border:1px solid var(--stroke); border-radius:20px; padding:14px; cursor:pointer; text-align:left; box-shadow:0 12px 30px -16px rgba(0,0,0,.4); transition:.25s}
 .nudge:hover{transform:scale(1.02)}
@@ -176,7 +176,7 @@ input[type=range]{width:100%; accent-color:var(--accent); height:26px}
 /* shield (app block preview) */
 .shield{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; height:100%; text-align:center; padding:40px}
 .shield .s-ic{width:88px;height:88px;border-radius:24px; background:var(--accent-soft); border:1px solid rgba(224,71,106,.3); display:grid; place-items:center; font-size:42px}
-.shield h3{font-family:'Bricolage Grotesque'; font-size:24px; font-weight:700}
+.shield h3{font-family:'Inter'; font-size:24px; font-weight:700}
 .shield p{color:var(--dim); font-size:14px; max-width:240px; line-height:1.5}
 
 /* ===== demo controls ===== */
@@ -207,7 +207,7 @@ body{ background-image: radial-gradient(58% 44% at 10% 2%, var(--accent-soft), t
 .warnbar{ border-radius:16px; }
 
 .apphead{ display:flex; align-items:center; justify-content:space-between; padding:6px 2px 14px; }
-.apphead .hi{ font-family:'Bricolage Grotesque'; font-weight:700; font-size:24px; letter-spacing:-.5px; }
+.apphead .hi{ font-family:'Inter'; font-weight:700; font-size:24px; letter-spacing:-.5px; }
 .apphead .hidate{ font-size:12.5px; color:var(--dim); margin-top:1px; }
 .round{ width:40px; height:40px; border-radius:50%; border:1px solid var(--stroke-2); background:var(--card); color:var(--ink); font-size:18px; cursor:pointer; display:grid; place-items:center; transition:.15s; }
 .round:hover{ border-color:var(--accent); transform:translateY(-1px); }
@@ -224,14 +224,14 @@ body{ background-image: radial-gradient(58% 44% at 10% 2%, var(--accent-soft), t
 .seeall:hover{ border-color:var(--accent); transform:translateY(-1px); }
 
 .phead{ display:flex; align-items:center; justify-content:space-between; padding:8px 0 8px; }
-.phead h1{ font-family:'Bricolage Grotesque'; font-size:24px; font-weight:700; letter-spacing:-.5px; }
+.phead h1{ font-family:'Inter'; font-size:24px; font-weight:700; letter-spacing:-.5px; }
 .hcard{ display:flex; align-items:center; gap:15px; background:var(--card); border:1px solid var(--stroke); border-radius:22px; padding:16px; margin-bottom:12px; cursor:pointer; transition:.18s; }
 .hcard:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lg); }
 .ring2{ width:62px; height:62px; border-radius:50%; display:grid; place-items:center; flex-shrink:0; }
 .ring2-in{ width:48px; height:48px; border-radius:50%; background:var(--card); display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.05; }
 .ring2-in b{ font-size:18px; font-weight:700; } .ring2-in small{ font-size:10px; color:var(--dim); }
 .hc-body{ flex:1; min-width:0; }
-.hc-name{ font-family:'Bricolage Grotesque'; font-size:17px; font-weight:700; letter-spacing:-.3px; }
+.hc-name{ font-family:'Inter'; font-size:17px; font-weight:700; letter-spacing:-.3px; }
 .hc-meta{ font-size:12px; color:var(--dim); margin-top:2px; }
 .hc-status{ font-size:12.5px; font-weight:600; margin-top:5px; }
 .hc-go{ font-size:24px; color:var(--dimmer); flex-shrink:0; }
@@ -268,15 +268,15 @@ body{ background-image: radial-gradient(58% 44% at 10% 2%, var(--accent-soft), t
       <!-- overlays -->
       <div class="ov count" id="ovCount">
         <div class="ring"></div>
-        <div class="ovl-kicker" id="countHabit">—</div>
+        <div class="ovl-kicker" id="countHabit"></div>
         <div class="count-num anim" id="countNum">5</div>
       </div>
 
       <div class="ov" id="ovFocus">
         <div class="ovl-kicker">Focus</div>
-        <div class="focus-name" id="focusName">—</div>
+        <div class="focus-name" id="focusName"></div>
         <div class="timer" id="focusTimer">00:00</div>
-        <div class="welcome" id="focusWelcome">Welcome back — finish it.</div>
+        <div class="welcome" id="focusWelcome">Welcome back, finish it.</div>
         <button class="bigbtn" id="focusDone">Done</button>
       </div>
 
@@ -288,7 +288,7 @@ body{ background-image: radial-gradient(58% 44% at 10% 2%, var(--accent-soft), t
           <div class="nudge-top">
             <div class="n-ic">5·4·3</div>
             <div class="n-main">
-              <div class="n-titlerow"><span class="n-title">5·4·3·2·1 — go.</span><span class="n-time">now</span></div>
+              <div class="n-titlerow"><span class="n-title">Your habit is waiting to be created</span><span class="n-time">now</span></div>
               <div class="n-body" id="nudgeBody">Time for: Read 10 pages</div>
             </div>
           </div>
@@ -296,7 +296,7 @@ body{ background-image: radial-gradient(58% 44% at 10% 2%, var(--accent-soft), t
             <div class="n-q">Are you starting your habit right now?</div>
             <div class="n-actions">
               <button class="n-no" id="nudgeNo">Not yet</button>
-              <button class="n-yes" id="nudgeYes">Yes — let's go</button>
+              <button class="n-yes" id="nudgeYes">Yes, let's go</button>
             </div>
           </div>
         </div>
@@ -335,7 +335,7 @@ body{ background-image: radial-gradient(58% 44% at 10% 2%, var(--accent-soft), t
     <div class="watch buzz">
       <div class="watch-scr">
         <div class="wt">⌚ now</div>
-        <div class="wb">5·4·3·2·1 — go.</div>
+        <div class="wb">Your habit is waiting</div>
         <div class="ws" id="watchBody">Read 10 pages</div>
       </div>
     </div>
@@ -344,7 +344,7 @@ body{ background-image: radial-gradient(58% 44% at 10% 2%, var(--accent-soft), t
 </div>
 
 <div class="devbar">
-  <span class="lab">demo controls — the real app uses real days &amp; real notifications</span>
+  <span class="lab">demo controls, the real app uses real days &amp; real notifications</span>
   <span class="day">Simulated day: <b id="simDay">1</b></span>
   <button id="notifFlow">🔔 Notification flow</button>
   <button id="skipDay">⏭ Skip a day (miss)</button>
@@ -357,7 +357,7 @@ body{ background-image: radial-gradient(58% 44% at 10% 2%, var(--accent-soft), t
 const GOAL=30, MS_DAY=86400000, $=s=>document.querySelector(s);
 const BADGES=[
   {day:7,  ic:'🔥', name:'7-day spark',  text:"You're past the hardest part."},
-  {day:15, ic:'⚡', name:'Halfway — habit built', text:"Day 16 onward is just maintenance. The rest is keeping a routine you already own."},
+  {day:15, ic:'⚡', name:'Halfway, habit built', text:"Day 16 onward is just maintenance. The rest is keeping a routine you already own."},
   {day:24, ic:'💎', name:'Locked in',    text:"This is routine territory now."},
   {day:30, ic:'🏆', name:'Habit formed', text:"30 days. It's part of who you are."},
 ];
@@ -401,10 +401,10 @@ function renderOnboarding(){
       <span class="step-eyebrow">Step 1 of 4 · the rule</span>
       <h2 class="q">Start with one thing.</h2>
       <p class="lead">One habit, done daily, is how a routine actually sticks. Only add a 2nd or 3rd if they're <b>interlinked</b> and feed the same “hero” habit.</p>
-      <div class="eg good"><div class="h">✓ works — parallel habits</div><div class="d">Read → Write → Publish a post daily. Or: Gym → Cook protein → Cook at home.</div></div>
-      <div class="eg bad"><div class="h">✕ too scattered</div><div class="d">Gym + Learn a language + 2 hrs with family. Different worlds — you'll burn out.</div></div>
+      <div class="eg good"><div class="h">✓ works, parallel habits</div><div class="d">Read → Write → Publish a post daily. Or: Gym → Cook protein → Cook at home.</div></div>
+      <div class="eg bad"><div class="h">✕ too scattered</div><div class="d">Gym + Learn a language + 2 hrs with family. Different worlds, you'll burn out.</div></div>
       <div class="lbl" style="margin-top:18px"><span>How to create your habit</span></div>
-      <div class="eg"><div class="d">Pick one <b>hero habit</b> — say <b>Gym</b>. Then stack only what feeds it: <b>cook protein</b>, then <b>cook at home</b>. Same goal, different actions. Lock in the hero first, and add the next one only once it feels automatic.</div></div>
+      <div class="eg"><div class="d">Pick one <b>hero habit</b>, say <b>Gym</b>. Then stack only what feeds it: <b>cook protein</b>, then <b>cook at home</b>. Same goal, different actions. Lock in the hero first, and add the next one only once it feels automatic.</div></div>
       <button class="btn" onclick="ob.step=1;render()">I understand, continue</button>`;
     return;
   }
@@ -415,15 +415,15 @@ function renderOnboarding(){
     v.innerHTML=obProgressBar()+`
       <span class="step-eyebrow">Step 2 of 4 · your habits (max 3)</span>
       <h2 class="q">What are you locking in?</h2>
-      <p class="lead">Name it, then set how long it takes daily. Keep it small — incremental steps win.</p>
+      <p class="lead">Name it, then set how long it takes daily. Keep it small, incremental steps win.</p>
       <input class="field" id="hName" placeholder="e.g. Read 10 pages" maxlength="40" ${ob.habits.length>=3?'disabled':''}>
       <div class="lbl"><span>Daily time</span><b id="minsOut">${ob.draftMins} min</b></div>
       <input type="range" id="mins" min="5" max="120" step="5" value="${ob.draftMins}" ${ob.habits.length>=3?'disabled':''}>
       <button class="btn ghost" id="addHabit" ${ob.habits.length>=3?'disabled':''} style="margin-top:10px">+ ${ob.habits.length?'Add another habit':'Create new habit'}</button>
-      ${ob.habits.length&&ob.habits.length<3?`<div class="warn">🔗 <b>Add a new habit only if it adds on to your hero habit.</b> Interlinked actions only — e.g. Gym → cook protein → cook at home.</div>`:''}
+      ${ob.habits.length&&ob.habits.length<3?`<div class="warn">🔗 <b>Add a new habit only if it adds on to your hero habit.</b> Interlinked actions only, e.g. Gym → cook protein → cook at home.</div>`:''}
       ${ob.habits.map((h,i)=>`<div class="added"><span class="nm">${esc(h.name)}</span><span class="mins">${h.mins} min</span><span class="x" onclick="ob.habits.splice(${i},1);render()">×</span></div>`).join('')}
       ${ob.habits.length?`<div class="note">Daily total: <b>${fmtH(total)}</b> across ${ob.habits.length} habit${ob.habits.length>1?'s':''}. Suggested cap: <b>${fmtH(cap)}</b>.</div>`:''}
-      ${over?`<div class="warn">⚠️ Beyond ~${fmtH(cap)}/day with ${ob.habits.length} habits gets hard to sustain. Consider trimming — small and steady beats ambitious and abandoned.</div>`:''}
+      ${over?`<div class="warn">⚠️ Beyond ~${fmtH(cap)}/day with ${ob.habits.length} habits gets hard to sustain. Consider trimming, small and steady beats big and abandoned.</div>`:''}
       ${ob.habits.length>=3?`<div class="note"><b>3 is the max.</b> Three only works if they're interlinked. Otherwise stop at one.</div>`:''}
       <button class="btn" id="obNext1" ${ob.habits.length?'':'disabled'}>Continue</button>`;
     const mins=$('#mins'), out=$('#minsOut');
@@ -440,9 +440,9 @@ function renderOnboarding(){
       <span class="step-eyebrow">Step 3 of 4 · reminders</span>
       <h2 class="q">How often should we nudge you?</h2>
       <p class="lead">Pick a window and a cadence. Reminders fire on repeat <b>until you complete your habit</b> that day.</p>
-      <div class="lbl"><span>Your schedule — when you're awake</span></div>
+      <div class="lbl"><span>Your schedule, when you're awake</span></div>
       <div class="choices" style="margin-bottom:4px">
-        <div class="choice ${!n.custom?'sel':''}" onclick="ob.notif.custom=false;render()"><div class="r"></div><div><div class="ct">Daytime · 8am – 10pm</div><div class="cs">the default for most people</div></div></div>
+        <div class="choice ${!n.custom?'sel':''}" onclick="ob.notif.custom=false;render()"><div class="r"></div><div><div class="ct">Daytime · 8am to 10pm</div><div class="cs">the default for most people</div></div></div>
         <div class="choice ${n.custom?'sel':''}" onclick="ob.notif.custom=true;render()"><div class="r"></div><div><div class="ct">Custom window</div><div class="cs">night shift, early riser, etc.</div></div></div>
       </div>
       ${n.custom?`<div class="times">
@@ -453,7 +453,7 @@ function renderOnboarding(){
       <div class="choices">
         <div class="choice ${n.every===1?'sel':''}" onclick="ob.notif.every=1;render()"><div class="r"></div><div><div class="ct">Every hour</div><div class="cs">most persistent</div></div></div>
         <div class="choice ${n.every===3?'sel':''}" onclick="ob.notif.every=3;render()"><div class="r"></div><div><div class="ct">Every 3 hours</div><div class="cs">balanced</div></div></div>
-        <div class="choice ${n.every===4?'sel':''}" onclick="ob.notif.every=4;render()"><div class="r"></div><div><div class="ct">Every 4 hours</div><div class="cs">gentlest — the max gap</div></div></div>
+        <div class="choice ${n.every===4?'sel':''}" onclick="ob.notif.every=4;render()"><div class="r"></div><div><div class="ct">Every 4 hours</div><div class="cs">gentlest, the max gap</div></div></div>
       </div>
       <div class="note">🔔 <b>Reminders keep coming until you complete your habit</b> for the day. The moment you finish, they go quiet till tomorrow.</div>
       <button class="btn" onclick="saveCustom();ob.step=3;render()">Continue</button>`;
@@ -463,7 +463,7 @@ function renderOnboarding(){
     v.innerHTML=obProgressBar()+`
       <span class="step-eyebrow">Step 4 of 4 · focus shield</span>
       <h2 class="q">Block distractions while you do it?</h2>
-      <p class="lead">Music, calls and maps stay open — only the apps you pick get locked during your focus session.</p>
+      <p class="lead">Music, calls and maps stay open. Only the apps you pick get locked during your focus session.</p>
       <div class="lbl"><span>Choose apps</span></div>
       <div class="applist">
         ${APPS.map((a,i)=>`<div class="appitem ${ob.blocked.includes(a.n)?'sel':''}" onclick="toggleApp('${a.n}')">
@@ -471,7 +471,7 @@ function renderOnboarding(){
           <div class="chk">${ob.blocked.includes(a.n)?'✓':''}</div></div>`).join('')}
       </div>
       <button class="link" id="previewBlock">▶ Preview how a blocked app looks</button>
-      <div class="note">In the real app this uses iOS Screen Time. ${ob.blocked.length?`<b>${ob.blocked.length} app${ob.blocked.length>1?'s':''}</b> will lock during focus.`:'Nothing selected — you can add this later.'}</div>
+      <div class="note">In the real app this uses iOS Screen Time. ${ob.blocked.length?`<b>${ob.blocked.length} app${ob.blocked.length>1?'s':''}</b> will lock during focus.`:'Nothing selected, you can add this later.'}</div>
       <button class="btn" onclick="finishOnboarding()">Start my 30 days</button>`;
     const pv=$('#previewBlock'); pv.onclick=()=>showShield(ob.blocked[0]||'Instagram');
     return;
@@ -491,11 +491,11 @@ function finishOnboarding(){
 function renderTracker(){
   const v=$('#view'); const i=state.selected; const h=state.habits[i]; const p=progress(h);
   const cadence = state.notif.every===1?'every hour':`every ${state.notif.every} hours`;
-  const win = `${state.notif.startHour}:00–${state.notif.endHour}:00`;
+  const win = `${state.notif.startHour}:00 to ${state.notif.endHour}:00`;
   const dstr = simNow().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
   let grid='';
   if(h.maintenance){
-    grid=`<div class="mtn">✓ <b>Habit formed.</b> You're now maintaining it — day ${p.struck} of 365.</div>`;
+    grid=`<div class="mtn">✓ <b>Habit formed.</b> You're now maintaining it, day ${p.struck} of 365.</div>`;
   } else {
     grid=`<div class="grid">${Array.from({length:GOAL},(_,d)=>{const n=d+1;const s=n<=p.struck;return `<div class="cell ${s?'struck':''}" data-d="${n}">${n}</div>`;}).join('')}</div>`;
   }
@@ -504,7 +504,7 @@ function renderTracker(){
       <div><div class="hi">Today</div><div class="hidate">${dstr}</div></div>
       <button class="round" id="toProg" title="All habits" aria-label="All habits">▦</button>
     </div>
-    <div class="warnbar">⚠️ <span>Miss a day and your progress drops by one. Show up daily — the streak only grows when you do.</span></div>
+    <div class="warnbar">⚠️ <span>Miss a day and your progress drops by one. Show up daily, the streak only grows when you do.</span></div>
     <div class="lbl" style="margin:2px 2px 6px"><span>Tracking</span></div>
     <div class="trk-head">
       <div class="habit-pick">
@@ -517,10 +517,10 @@ function renderTracker(){
     <div class="remain"><b>${p.struck}</b> of ${p.goal} days done · ${p.isComplete?'🎉 done!':'<b>'+p.remaining+'</b> to go'}</div>
     ${grid}
     <button class="start ${p.isDoneToday||p.isComplete?'is-done':''}" id="startBtn">
-      ${p.isComplete?'Complete ✓':(p.isDoneToday?'Done for today ✓':'5·4·3·2·1 — START')}</button>
+      ${p.isComplete?'Complete ✓':(p.isDoneToday?'Done for today ✓':'5·4·3·2·1 START')}</button>
     ${h.maintenance?'':milestoneBlock(p)}
     <button class="seeall" id="seeAll">See all my habits →</button>
-    <button class="simbtn" id="simBtn" ${p.isDoneToday?'disabled':''}>🔔 ${p.isDoneToday?'All done — nudges off today':'Preview a notification'}</button>
+    <button class="simbtn" id="simBtn" ${p.isDoneToday?'disabled':''}>🔔 ${p.isDoneToday?'All done, nudges off today':'Preview a notification'}</button>
     <div class="note" style="margin-top:12px">Reminders: <b>${cadence}</b>, ${win}. They stop the moment you finish.</div>`;
   const sel=$('#habitSel'); if(sel) sel.onchange=e=>{ state.selected=+e.target.value; save(); render(); };
   $('#startBtn').onclick=()=>{ if(!p.isDoneToday && !p.isComplete) startRitual(i); };
@@ -629,7 +629,7 @@ function celebrate(name){
     ov.appendChild(c); setTimeout(()=>c.remove(),4400); }
 }
 $('#celeClose').onclick=()=>$('#ovCele').classList.remove('show');
-$('#celeContinue').onclick=()=>{ const h=state.habits[activeIdx]; h.maintenance=true; save(); $('#ovCele').classList.remove('show'); render(); toast('Maintenance mode on — 365 days'); };
+$('#celeContinue').onclick=()=>{ const h=state.habits[activeIdx]; h.maintenance=true; save(); $('#ovCele').classList.remove('show'); render(); toast('Maintenance mode on, 365 days'); };
 
 /* ============ NOTIFICATION FLOW ============ */
 function showNudge(i){
@@ -643,7 +643,7 @@ function showNudge(i){
 }
 $('#nudgeCard').onclick=e=>{ if(e.target.closest('.n-actions')) return; $('#nudgeCard').classList.add('open'); };
 $('#nudgeYes').onclick=()=>{ closeNudge(); startRitual(activeIdx); };
-$('#nudgeNo').onclick=()=>{ closeNudge(); const every=state.notif.every; toast(`Okay — I'll check in in ${every} hour${every>1?'s':''}.`); };
+$('#nudgeNo').onclick=()=>{ closeNudge(); const every=state.notif.every; toast(`okay, I'll check in in ${every} hour${every>1?'s':''}.`); };
 $('#nudgeClose').onclick=closeNudge;
 function closeNudge(){ $('#ovNudge').classList.remove('show'); $('#watchWrap').style.display='none'; }
 
@@ -669,10 +669,10 @@ $('#notifFlow').onclick=()=>{
   if(!state.onboarded){
     state.habits=[{name:'Read 10 pages',mins:30,start:simNow().toISOString(),done:[],maintenance:false}];
     state.notif={startHour:8,endHour:22,every:1}; state.blocked=['Instagram']; state.onboarded=true; state.selected=0; state.earned={}; save(); render();
-    toast('Demo habit added — here comes a nudge');
+    toast('Demo habit added, here comes a nudge');
   }
   const i=state.selected;
-  if(progress(state.habits[i]).isDoneToday){ toast('Already done today — nudges are off'); return; }
+  if(progress(state.habits[i]).isDoneToday){ toast('Already done today, nudges are off'); return; }
   showNudge(i);
 };
 $('#skipDay').onclick=()=>{ state.offset++; save(); render(); };

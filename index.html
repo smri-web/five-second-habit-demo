@@ -370,13 +370,13 @@ function renderOnboarding(){
       <span class="step-eyebrow">Step 3 of 4 · reminders</span>
       <h2 class="q">How often should we nudge you?</h2>
       <p class="lead">Pick a window and a cadence. Reminders fire on repeat <b>until you complete your habit</b> that day.</p>
-      <div class="lbl"><span>Active hours</span></div>
+      <div class="lbl"><span>Your schedule — when you're awake</span></div>
       <div class="choices" style="margin-bottom:4px">
         <div class="choice ${!n.custom?'sel':''}" onclick="ob.notif.custom=false;render()"><div class="r"></div><div><div class="ct">Daytime · 8am – 10pm</div><div class="cs">the default for most people</div></div></div>
         <div class="choice ${n.custom?'sel':''}" onclick="ob.notif.custom=true;render()"><div class="r"></div><div><div class="ct">Custom window</div><div class="cs">night shift, early riser, etc.</div></div></div>
       </div>
       ${n.custom?`<div class="times"><input class="field" id="sH" type="number" min="0" max="23" value="${n.startHour}"><input class="field" id="eH" type="number" min="0" max="23" value="${n.endHour}"></div><div class="cs" style="font-size:11.5px;color:var(--dimmer);margin-top:6px;text-align:center">start hour → end hour (24h)</div>`:''}
-      <div class="lbl" style="margin-top:18px"><span>Cadence</span></div>
+      <div class="lbl" style="margin-top:18px"><span>Cadence you want to be notified</span></div>
       <div class="choices">
         <div class="choice ${n.every===1?'sel':''}" onclick="ob.notif.every=1;render()"><div class="r"></div><div><div class="ct">Every hour</div><div class="cs">most persistent</div></div></div>
         <div class="choice ${n.every===3?'sel':''}" onclick="ob.notif.every=3;render()"><div class="r"></div><div><div class="ct">Every 3 hours</div><div class="cs">balanced</div></div></div>

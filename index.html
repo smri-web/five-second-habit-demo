@@ -147,14 +147,17 @@ input[type=range]{width:100%; accent-color:var(--accent); height:26px}
 .confetti{position:absolute; top:-10px; width:9px; height:14px; border-radius:2px; animation:fall linear forwards}
 
 /* lock screen / nudge */
-.lock-time{font-family:'Bricolage Grotesque'; font-weight:500; font-size:62px; line-height:1; margin-top:-30px}
-.lock-date{font-size:14px; color:var(--dim); margin-bottom:30px}
+#ovNudge{justify-content:flex-start; padding-top:74px}
+.lock-time{font-family:'Bricolage Grotesque'; font-weight:500; font-size:60px; line-height:1}
+.lock-date{font-size:14px; color:var(--dim); margin-bottom:40px}
 .nudge{width:100%; background:var(--card); border:1px solid var(--stroke); border-radius:20px; padding:14px; cursor:pointer; text-align:left; box-shadow:0 12px 30px -16px rgba(0,0,0,.4); transition:.25s}
 .nudge:hover{transform:scale(1.02)}
-.nudge-top{display:flex; gap:11px; align-items:center}
+.nudge-top{display:flex; gap:11px; align-items:flex-start}
 .n-ic{width:36px;height:36px;border-radius:9px; background:var(--accent); color:#fff; display:grid; place-items:center; font-weight:700; font-size:11px; flex-shrink:0}
-.n-title{font-size:14px; font-weight:600} .n-time{margin-left:auto; font-size:11px; color:var(--dimmer)}
-.n-body{font-size:13.5px; color:var(--dim); margin-top:8px}
+.n-main{flex:1; min-width:0}
+.n-titlerow{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.n-title{font-size:14px; font-weight:600} .n-time{font-size:11px; color:var(--dimmer); flex-shrink:0}
+.n-body{font-size:13.5px; color:var(--dim); margin-top:3px}
 .n-expand{margin-top:14px; border-top:1px solid var(--stroke); padding-top:14px; display:none}
 .nudge.open .n-expand{display:block; animation:rise .3s}
 .n-q{font-size:14px; font-weight:600; margin-bottom:12px}
@@ -245,10 +248,11 @@ input[type=range]{width:100%; accent-color:var(--accent); height:26px}
         <div class="nudge" id="nudgeCard">
           <div class="nudge-top">
             <div class="n-ic">5·4·3</div>
-            <div class="n-title">5·4·3·2·1 — go.</div>
-            <div class="n-time">now</div>
+            <div class="n-main">
+              <div class="n-titlerow"><span class="n-title">5·4·3·2·1 — go.</span><span class="n-time">now</span></div>
+              <div class="n-body" id="nudgeBody">Time for: Read 10 pages</div>
+            </div>
           </div>
-          <div class="n-body" id="nudgeBody">Time for: Read 10 pages</div>
           <div class="n-expand">
             <div class="n-q">Are you starting your habit right now?</div>
             <div class="n-actions">
@@ -376,7 +380,8 @@ function renderOnboarding(){
       <input class="field" id="hName" placeholder="e.g. Read 10 pages" maxlength="40" ${ob.habits.length>=3?'disabled':''}>
       <div class="lbl"><span>Daily time</span><b id="minsOut">${ob.draftMins} min</b></div>
       <input type="range" id="mins" min="5" max="120" step="5" value="${ob.draftMins}" ${ob.habits.length>=3?'disabled':''}>
-      <button class="btn ghost" id="addHabit" ${ob.habits.length>=3?'disabled':''} style="margin-top:10px">+ Add ${ob.habits.length?'another habit':'habit'}</button>
+      <button class="btn ghost" id="addHabit" ${ob.habits.length>=3?'disabled':''} style="margin-top:10px">+ ${ob.habits.length?'Add another habit':'Create new habit'}</button>
+      ${ob.habits.length&&ob.habits.length<3?`<div class="warn">🔗 <b>Add a new habit only if it adds on to your hero habit.</b> Interlinked actions only — e.g. Gym → cook protein → cook at home.</div>`:''}
       ${ob.habits.map((h,i)=>`<div class="added"><span class="nm">${esc(h.name)}</span><span class="mins">${h.mins} min</span><span class="x" onclick="ob.habits.splice(${i},1);render()">×</span></div>`).join('')}
       ${ob.habits.length?`<div class="note">Daily total: <b>${fmtH(total)}</b> across ${ob.habits.length} habit${ob.habits.length>1?'s':''}. Suggested cap: <b>${fmtH(cap)}</b>.</div>`:''}
       ${over?`<div class="warn">⚠️ Beyond ~${fmtH(cap)}/day with ${ob.habits.length} habits gets hard to sustain. Consider trimming — small and steady beats ambitious and abandoned.</div>`:''}
@@ -405,7 +410,7 @@ function renderOnboarding(){
         <div style="flex:1"><div style="font-size:11px;color:var(--dim);font-weight:600;margin:0 0 5px 4px">From</div><input class="field" id="sH" type="time" value="${String(n.startHour).padStart(2,'0')}:00"></div>
         <div style="flex:1"><div style="font-size:11px;color:var(--dim);font-weight:600;margin:0 0 5px 4px">To</div><input class="field" id="eH" type="time" value="${String(n.endHour).padStart(2,'0')}:00"></div>
       </div>`:''}
-      <div class="lbl" style="margin-top:18px"><span>Cadence you want to be notified</span></div>
+      <div class="lbl" style="margin-top:18px"><span>Set notification cadence</span></div>
       <div class="choices">
         <div class="choice ${n.every===1?'sel':''}" onclick="ob.notif.every=1;render()"><div class="r"></div><div><div class="ct">Every hour</div><div class="cs">most persistent</div></div></div>
         <div class="choice ${n.every===3?'sel':''}" onclick="ob.notif.every=3;render()"><div class="r"></div><div><div class="ct">Every 3 hours</div><div class="cs">balanced</div></div></div>

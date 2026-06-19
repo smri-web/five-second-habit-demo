@@ -197,6 +197,45 @@ input[type=range]{width:100%; accent-color:var(--accent); height:26px}
 @keyframes fall{to{transform:translateY(900px) rotate(540deg); opacity:0}}
 @keyframes buzz{0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)}}
 
+/* ===== sleek uplift ===== */
+:root{ --shadow:0 10px 30px -16px rgba(60,40,50,.20); --shadow-lg:0 20px 46px -22px rgba(60,40,50,.30); }
+@media (prefers-color-scheme: dark){ :root{ --shadow:0 14px 34px -22px rgba(0,0,0,.8); --shadow-lg:0 22px 50px -24px rgba(0,0,0,.85); } }
+body{ background-image: radial-gradient(58% 44% at 10% 2%, var(--accent-soft), transparent 55%), radial-gradient(52% 40% at 94% 100%, rgba(124,108,240,.12), transparent 60%); }
+.card,.mile,.seeall,.round,.hcard{ box-shadow:var(--shadow); }
+.cell{ border-radius:12px; }
+.pbar{ height:9px; }
+.warnbar{ border-radius:16px; }
+
+.apphead{ display:flex; align-items:center; justify-content:space-between; padding:6px 2px 14px; }
+.apphead .hi{ font-family:'Bricolage Grotesque'; font-weight:700; font-size:24px; letter-spacing:-.5px; }
+.apphead .hidate{ font-size:12.5px; color:var(--dim); margin-top:1px; }
+.round{ width:40px; height:40px; border-radius:50%; border:1px solid var(--stroke-2); background:var(--card); color:var(--ink); font-size:18px; cursor:pointer; display:grid; place-items:center; transition:.15s; }
+.round:hover{ border-color:var(--accent); transform:translateY(-1px); }
+
+.miles{ display:flex; flex-direction:column; gap:9px; margin-top:16px; }
+.mile{ display:flex; gap:11px; align-items:center; background:var(--card); border:1px solid var(--stroke); border-radius:16px; padding:13px 15px; font-size:13.5px; }
+.mile .mi{ font-size:18px; width:24px; text-align:center; flex-shrink:0; }
+.mile b{ color:var(--accent); font-weight:700; }
+.mile.ok .mi,.mile.ok b{ color:var(--good); }
+.mile.teaser{ background:var(--accent-soft); border-color:rgba(224,71,106,.3); }
+.mile.teaser b{ color:var(--ink); }
+
+.seeall{ width:100%; border:1px solid var(--stroke-2); background:var(--card); border-radius:100px; padding:14px; font-family:inherit; font-size:14.5px; font-weight:600; color:var(--ink); cursor:pointer; margin-top:14px; transition:.15s; }
+.seeall:hover{ border-color:var(--accent); transform:translateY(-1px); }
+
+.phead{ display:flex; align-items:center; justify-content:space-between; padding:8px 0 8px; }
+.phead h1{ font-family:'Bricolage Grotesque'; font-size:24px; font-weight:700; letter-spacing:-.5px; }
+.hcard{ display:flex; align-items:center; gap:15px; background:var(--card); border:1px solid var(--stroke); border-radius:22px; padding:16px; margin-bottom:12px; cursor:pointer; transition:.18s; }
+.hcard:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+.ring2{ width:62px; height:62px; border-radius:50%; display:grid; place-items:center; flex-shrink:0; }
+.ring2-in{ width:48px; height:48px; border-radius:50%; background:var(--card); display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.05; }
+.ring2-in b{ font-size:18px; font-weight:700; } .ring2-in small{ font-size:10px; color:var(--dim); }
+.hc-body{ flex:1; min-width:0; }
+.hc-name{ font-family:'Bricolage Grotesque'; font-size:17px; font-weight:700; letter-spacing:-.3px; }
+.hc-meta{ font-size:12px; color:var(--dim); margin-top:2px; }
+.hc-status{ font-size:12.5px; font-weight:600; margin-top:5px; }
+.hc-go{ font-size:24px; color:var(--dimmer); flex-shrink:0; }
+
 /* ===== phone / responsive ===== */
 @media (max-width: 480px){
   body{ padding:0; gap:0; background-attachment:fixed; }
@@ -317,7 +356,7 @@ input[type=range]{width:100%; accent-color:var(--accent); height:26px}
 <script>
 const GOAL=30, MS_DAY=86400000, $=s=>document.querySelector(s);
 const BADGES=[
-  {day:8,  ic:'🔥', name:'8-day spark',  text:"You're past the hardest part."},
+  {day:7,  ic:'🔥', name:'7-day spark',  text:"You're past the hardest part."},
   {day:15, ic:'⚡', name:'Halfway — habit built', text:"Day 16 onward is just maintenance. The rest is keeping a routine you already own."},
   {day:24, ic:'💎', name:'Locked in',    text:"This is routine territory now."},
   {day:30, ic:'🏆', name:'Habit formed', text:"30 days. It's part of who you are."},
@@ -330,7 +369,7 @@ const APPS=[
 
 const base=new Date(); base.setHours(0,0,0,0);
 let state=load()||fresh();
-function fresh(){ return {onboarded:false, habits:[], notif:{startHour:8,endHour:22,every:1}, blocked:[], offset:0, selected:0, earned:{}}; }
+function fresh(){ return {onboarded:false, habits:[], notif:{startHour:8,endHour:22,every:1}, blocked:[], offset:0, selected:0, earned:{}, screen:'today'}; }
 function load(){ try{return JSON.parse(localStorage.getItem('demo54321'));}catch(e){return null;} }
 function save(){ localStorage.setItem('demo54321', JSON.stringify(state)); }
 function simNow(){ return new Date(base.getTime()+state.offset*MS_DAY); }
@@ -453,6 +492,7 @@ function renderTracker(){
   const v=$('#view'); const i=state.selected; const h=state.habits[i]; const p=progress(h);
   const cadence = state.notif.every===1?'every hour':`every ${state.notif.every} hours`;
   const win = `${state.notif.startHour}:00–${state.notif.endHour}:00`;
+  const dstr = simNow().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
   let grid='';
   if(h.maintenance){
     grid=`<div class="mtn">✓ <b>Habit formed.</b> You're now maintaining it — day ${p.struck} of 365.</div>`;
@@ -460,6 +500,10 @@ function renderTracker(){
     grid=`<div class="grid">${Array.from({length:GOAL},(_,d)=>{const n=d+1;const s=n<=p.struck;return `<div class="cell ${s?'struck':''}" data-d="${n}">${n}</div>`;}).join('')}</div>`;
   }
   v.innerHTML=`
+    <div class="apphead">
+      <div><div class="hi">Today</div><div class="hidate">${dstr}</div></div>
+      <button class="round" id="toProg" title="All habits" aria-label="All habits">▦</button>
+    </div>
     <div class="warnbar">⚠️ <span>Miss a day and your progress drops by one. Show up daily — the streak only grows when you do.</span></div>
     <div class="lbl" style="margin:2px 2px 6px"><span>Tracking</span></div>
     <div class="trk-head">
@@ -474,13 +518,58 @@ function renderTracker(){
     ${grid}
     <button class="start ${p.isDoneToday||p.isComplete?'is-done':''}" id="startBtn">
       ${p.isComplete?'Complete ✓':(p.isDoneToday?'Done for today ✓':'5·4·3·2·1 — START')}</button>
-    ${h.maintenance?'':`<div class="badges">${BADGES.map(b=>`<div class="bdg ${p.struck>=b.day?'earned':''}"><div class="ic">${b.ic}</div><div class="dy">Day ${b.day}</div></div>`).join('')}</div>`}
-    ${(!h.maintenance && p.struck>=15 && p.struck<30)?`<div class="mtn">⚡ <b>Halfway — the habit is built.</b> Day 16+ is maintenance. Keep showing up.</div>`:''}
+    ${h.maintenance?'':milestoneBlock(p)}
+    <button class="seeall" id="seeAll">See all my habits →</button>
     <button class="simbtn" id="simBtn" ${p.isDoneToday?'disabled':''}>🔔 ${p.isDoneToday?'All done — nudges off today':'Preview a notification'}</button>
     <div class="note" style="margin-top:12px">Reminders: <b>${cadence}</b>, ${win}. They stop the moment you finish.</div>`;
   const sel=$('#habitSel'); if(sel) sel.onchange=e=>{ state.selected=+e.target.value; save(); render(); };
   $('#startBtn').onclick=()=>{ if(!p.isDoneToday && !p.isComplete) startRitual(i); };
   $('#simBtn').onclick=()=>{ if(!p.isDoneToday) showNudge(i); };
+  $('#toProg').onclick=()=>{ state.screen='progress'; save(); render(); };
+  $('#seeAll').onclick=()=>{ state.screen='progress'; save(); render(); };
+}
+
+function milestoneBlock(p){
+  const toHabit=Math.max(0,15-p.struck), toRoutine=Math.max(0,30-p.struck);
+  const earnedAny=(state.earned[state.selected]||[]).length>0;
+  let rows='';
+  if(p.struck>=15){
+    rows+=`<div class="mile ok"><span class="mi">✓</span><div><b>Habit created.</b> ${toRoutine>0?`${toRoutine} more days to lock in the routine.`:`It's a routine now.`}</div></div>`;
+  } else {
+    rows+=`<div class="mile"><span class="mi">⚡</span><div><b>${toHabit}</b> more days to create your habit</div></div>`;
+  }
+  rows+=`<div class="mile"><span class="mi">🔥</span><div><b>${toRoutine}</b> more days for this to become a routine</div></div>`;
+  if(!earnedAny && p.struck<7) rows+=`<div class="mile teaser"><span class="mi">🏅</span><div>Get your first badge on <b>day 7</b>!</div></div>`;
+  return `<div class="miles">${rows}</div>`;
+}
+
+/* ============ PROGRESS / ALL HABITS ============ */
+function renderProgress(){
+  const v=$('#view');
+  const ringColors=['#e0476a','#7c6cf0','#1d9e75'];
+  v.innerHTML=`
+    <div class="phead">
+      <button class="round" id="backToday" aria-label="Back">‹</button>
+      <h1>Your habits</h1><span style="width:38px"></span>
+    </div>
+    <p class="lead" style="margin:2px 2px 16px">Track every habit and how far you are. Tap one to focus on it.</p>
+    ${state.habits.map((h,j)=>{
+      const p=progress(h), pct=Math.round(p.struck/p.goal*360), col=ringColors[j%3];
+      const status = p.isComplete?'Complete 🎉':(p.isDoneToday?'Done today ✓':`${Math.max(0,30-p.struck)} days to routine`);
+      return `<div class="hcard" onclick="state.selected=${j};state.screen='today';save();render()">
+        <div class="ring2" style="background:conic-gradient(${col} ${pct}deg, var(--card2) 0)"><div class="ring2-in"><b>${p.struck}</b><small>/${p.goal}</small></div></div>
+        <div class="hc-body">
+          <div class="hc-name">${esc(h.name)}</div>
+          <div class="hc-meta">${h.mins} min/day · ${p.struck>=15?'habit built':'building'}</div>
+          <div class="hc-status" style="color:${p.isDoneToday||p.isComplete?'var(--good)':'var(--dim)'}">${status}</div>
+        </div>
+        <span class="hc-go">›</span>
+      </div>`;
+    }).join('')}
+    ${state.habits.length<3?`<button class="seeall" id="addMore">+ Add another habit</button>`:''}
+    <button class="seeall" id="backStart" style="margin-top:8px">‹ Back to today</button>`;
+  $('#backToday').onclick=$('#backStart').onclick=()=>{ state.screen='today'; save(); render(); };
+  const am=$('#addMore'); if(am) am.onclick=()=>{ toast('In the full app this opens setup. (Demo: restart to add more.)'); };
 }
 
 /* ============ RITUAL ============ */
@@ -510,6 +599,7 @@ $('#focusDone').onclick=()=>{
   save(); $('#ovFocus').classList.remove('show'); buzzDone(); render();
   const p=progress(h);
   const cell=document.querySelector(`.cell[data-d="${p.struck}"]`); if(cell) cell.classList.add('pop');
+  if(p.struck<30) toast(`🔥 ${Math.max(0,30-p.struck)} more days to a routine · ${Math.max(0,15-p.struck)} to the habit`);
   setTimeout(()=>checkRewards(activeIdx, before, p.struck), 480);
 };
 
@@ -562,9 +652,9 @@ function showShield(app){ $('#shieldApp').textContent=app+' is blocked'; $('#ovS
 $('#shieldClose').onclick=()=>$('#ovShield').classList.remove('show');
 
 /* ============ helpers ============ */
-function render(){ $('#simDay').textContent=state.offset+1;
-  if(!state.onboarded){ if(!ob) startOnboarding(); else renderOnboarding(); }
-  else renderTracker(); }
+function render(){ $('#simDay').textContent=state.offset+1; state.screen=state.screen||'today';
+  if(!state.onboarded){ if(!ob) startOnboarding(); else renderOnboarding(); return; }
+  if(state.screen==='progress') renderProgress(); else renderTracker(); }
 function esc(s){ return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmtH(m){ const h=m/60; return h===Math.floor(h)?h+'h':h.toFixed(1)+'h'; }
 function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }

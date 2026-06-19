@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5·4·3·2·1 — prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0d; --card:#141319; --card2:#1c1a22; --ink:#f5f3f7;
+  --dim:rgba(245,243,247,.52); --dimmer:rgba(245,243,247,.30);
+  --accent:#ff6f91; --accent-2:#ffd07a; --accent-soft:rgba(255,111,145,.14);
+  --stroke:rgba(255,255,255,.08); --stroke-2:rgba(255,255,255,.14);
+  --disp:'Bricolage Grotesque',sans-serif; --body:'Hanken Grotesk',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:var(--body); background:var(--bg); color:var(--ink);
+  min-height:100vh; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:26px; padding:40px 16px;
+  background-image:
+    radial-gradient(60% 50% at 18% 8%, rgba(255,111,145,.16), transparent 60%),
+    radial-gradient(50% 45% at 88% 92%, rgba(255,208,122,.10), transparent 60%);
+  overflow-x:hidden;
+}
+body::before{ /* grain */
+  content:""; position:fixed; inset:0; pointer-events:none; opacity:.035; z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.wordmark{font-family:var(--disp); font-weight:600; letter-spacing:-.5px; font-size:15px; color:var(--dim)}
+.wordmark b{color:var(--accent)}
+
+/* ---------- phone frame ---------- */
+.phone{
+  position:relative; width:384px; height:812px; border-radius:54px;
+  background:#000; padding:11px;
+  box-shadow:0 0 0 11px #16151b, 0 0 0 12px #2a2832, 0 40px 90px -20px rgba(0,0,0,.9),
+             0 0 120px -30px rgba(255,111,145,.25);
+}
+.notch{position:absolute; top:20px; left:50%; transform:translateX(-50%); width:120px; height:30px;
+  background:#000; border-radius:18px; z-index:60}
+.screen{
+  position:relative; width:100%; height:100%; border-radius:44px; overflow:hidden;
+  background:var(--bg); display:flex; flex-direction:column;
+}
+.statusbar{display:flex; justify-content:space-between; align-items:center; padding:16px 28px 4px;
+  font-size:13px; font-weight:600; color:var(--ink); flex-shrink:0}
+.statusbar .dots{display:flex; gap:5px; align-items:center; color:var(--ink)}
+
+.view{flex:1; overflow-y:auto; padding:8px 20px 30px; scrollbar-width:none}
+.view::-webkit-scrollbar{display:none}
+
+/* ---------- home ---------- */
+.home-head{display:flex; align-items:center; justify-content:space-between; padding:14px 4px 18px}
+.home-head h1{font-family:var(--disp); font-weight:700; font-size:30px; letter-spacing:-1.5px}
+.home-head h1 i{font-style:normal; color:var(--accent)}
+.add-btn{width:40px; height:40px; border-radius:50%; border:1px solid var(--stroke-2);
+  background:var(--card); color:var(--ink); font-size:22px; cursor:pointer; display:grid;
+  place-items:center; transition:.2s; line-height:0}
+.add-btn:hover{background:var(--card2); transform:scale(1.06)}
+.add-btn:disabled{opacity:.3; cursor:not-allowed}
+
+.card{background:var(--card); border:1px solid var(--stroke); border-radius:26px;
+  padding:22px 20px; margin-bottom:16px; box-shadow:0 14px 30px -22px rgba(0,0,0,.9);
+  animation:rise .5s cubic-bezier(.2,.8,.2,1) backwards}
+.card-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
+.card-top h2{font-family:var(--disp); font-size:21px; font-weight:600; letter-spacing:-.5px}
+.badge{font-size:12px; font-weight:600; color:var(--dim); white-space:nowrap}
+.badge.done{color:var(--accent)}
+.remain{font-size:14px; color:var(--dim); margin:6px 0 16px}
+.remain b{color:var(--ink); font-weight:600}
+
+.grid{display:grid; grid-template-columns:repeat(6,1fr); gap:7px; margin-bottom:18px}
+.cell{position:relative; aspect-ratio:1; border-radius:9px; background:var(--card2);
+  border:1px solid var(--stroke); display:grid; place-items:center; font-size:11px;
+  font-weight:600; color:var(--dimmer); overflow:hidden; transition:background .35s,color .35s}
+.cell.struck{background:var(--accent-soft); border-color:rgba(255,111,145,.4); color:var(--accent)}
+.cell.struck::after{content:""; position:absolute; left:12%; right:12%; height:2px;
+  background:var(--accent); transform:rotate(-22deg); transform-origin:center;
+  animation:strike .4s cubic-bezier(.2,.8,.2,1)}
+.cell.pop{animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+
+.start{width:100%; border:none; border-radius:100px; padding:17px; font-family:var(--body);
+  font-size:16px; font-weight:700; letter-spacing:.3px; cursor:pointer; color:#1a1014;
+  background:var(--accent); transition:.2s; box-shadow:0 10px 26px -10px rgba(255,111,145,.6)}
+.start:hover{transform:translateY(-2px); box-shadow:0 16px 34px -10px rgba(255,111,145,.7)}
+.start:active{transform:translateY(0)}
+.start.is-done{background:var(--card2); color:var(--dim); box-shadow:none; cursor:default}
+.cap-note{text-align:center; font-size:12.5px; color:var(--dimmer); margin-top:4px}
+
+/* ---------- onboarding ---------- */
+.ob{height:100%; display:flex; flex-direction:column; justify-content:center; padding:0 6px; gap:14px}
+.ob .kicker{font-size:12px; font-weight:600; letter-spacing:2px; color:var(--accent); text-transform:uppercase}
+.ob h1{font-family:var(--disp); font-size:38px; line-height:1.02; font-weight:700; letter-spacing:-1.5px}
+.ob p{color:var(--dim); font-size:15px; margin-bottom:6px}
+.field{width:100%; background:var(--card); border:1px solid var(--stroke-2); border-radius:16px;
+  padding:16px 18px; color:var(--ink); font-family:var(--body); font-size:16px; outline:none; transition:.2s}
+.field:focus{border-color:var(--accent)}
+.field::placeholder{color:var(--dimmer)}
+.primary{width:100%; border:none; border-radius:100px; padding:17px; font-family:var(--body);
+  font-size:16px; font-weight:700; cursor:pointer; color:#1a1014; background:var(--accent); transition:.2s}
+.primary:hover{transform:translateY(-2px)}
+.primary:disabled{opacity:.35; cursor:not-allowed; transform:none}
+.locked{display:flex; gap:12px; align-items:center; background:var(--card); border:1px solid var(--stroke);
+  border-radius:16px; padding:15px 16px; margin-top:10px}
+.locked .lk{font-size:18px; opacity:.6}
+.locked .t1{font-size:14px; font-weight:600}
+.locked .t2{font-size:12px; color:var(--dim); margin-top:2px}
+.locked .pill{margin-left:auto; font-size:10px; font-weight:700; letter-spacing:.5px; color:var(--accent-2);
+  border:1px solid rgba(255,208,122,.35); border-radius:100px; padding:4px 9px; white-space:nowrap}
+
+/* ---------- overlays ---------- */
+.overlay{position:absolute; inset:0; z-index:50; border-radius:44px; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:18px; text-align:center; padding:40px;
+  background:radial-gradient(circle at 50% 38%, #18121a, #0a0a0d 75%); opacity:0; pointer-events:none;
+  transition:opacity .35s}
+.overlay.show{opacity:1; pointer-events:auto}
+.ovl-kicker{font-size:12px; font-weight:600; letter-spacing:3px; color:var(--dim); text-transform:uppercase}
+.count{font-family:var(--disp); font-weight:800; font-size:170px; line-height:1; letter-spacing:-6px; color:var(--ink)}
+.count.go{font-size:104px; color:var(--accent); text-shadow:0 0 50px rgba(255,111,145,.5)}
+@keyframes tickIn{0%{opacity:0; transform:scale(.4) translateY(10px); filter:blur(6px)}
+  60%{opacity:1; filter:blur(0)} 100%{opacity:1; transform:scale(1)}}
+.count.anim{animation:tickIn .5s cubic-bezier(.2,.9,.3,1)}
+.sub{font-size:18px; color:var(--ink); font-weight:500}
+.ring{position:absolute; width:300px; height:300px; border-radius:50%; border:1px solid var(--stroke-2);
+  animation:pulse 1s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.7); opacity:.7} 100%{transform:scale(1.25); opacity:0}}
+
+/* focus */
+.focus-name{font-family:var(--disp); font-size:32px; font-weight:700; letter-spacing:-1px; max-width:280px}
+.timer{font-size:54px; font-weight:300; font-variant-numeric:tabular-nums; letter-spacing:1px}
+.welcome{color:var(--accent); font-weight:600; font-size:15px; height:18px; opacity:0; transition:.3s}
+.welcome.show{opacity:1}
+.done-btn{margin-top:6px; border:none; border-radius:100px; padding:16px 60px; font-family:var(--body);
+  font-size:17px; font-weight:700; color:#1a1014; background:var(--accent); cursor:pointer; transition:.2s}
+.done-btn:hover{transform:translateY(-2px)}
+
+/* celebration */
+.cele h1{font-family:var(--disp); font-size:36px; font-weight:700; letter-spacing:-1px}
+.cele .emoji{font-size:74px; animation:pop .6s cubic-bezier(.2,1.4,.4,1)}
+.cele p{color:var(--dim); font-size:15px; max-width:260px}
+.confetti{position:absolute; top:-10px; width:9px; height:14px; border-radius:2px; opacity:.9;
+  animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(900px) rotate(540deg); opacity:0}}
+
+@keyframes rise{from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:none}}
+@keyframes strike{from{transform:rotate(-22deg) scaleX(0)} to{transform:rotate(-22deg) scaleX(1)}}
+@keyframes pop{0%{transform:scale(.5)} 60%{transform:scale(1.12)} 100%{transform:scale(1)}}
+
+/* ---------- prototype controls ---------- */
+.devbar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center;
+  max-width:520px; background:rgba(255,255,255,.03); border:1px solid var(--stroke);
+  border-radius:16px; padding:12px 16px}
+.devbar .lab{font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--dimmer);
+  width:100%; text-align:center; margin-bottom:2px}
+.devbar button{font-family:var(--body); font-size:13px; font-weight:600; color:var(--ink);
+  background:var(--card); border:1px solid var(--stroke-2); border-radius:100px; padding:8px 14px;
+  cursor:pointer; transition:.15s}
+.devbar button:hover{background:var(--card2); border-color:var(--accent)}
+.devbar .day{font-size:13px; color:var(--dim)}
+.devbar .day b{color:var(--accent-2)}
+.hint{font-size:12px; color:var(--dimmer); text-align:center; max-width:420px; line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wordmark">prototype · <b>5·4·3·2·1</b> habit tracker</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="screen">
+    <div class="statusbar">
+      <span id="clock">9:41</span>
+      <span class="dots">●●● ▽ 100%</span>
+    </div>
+    <div class="view" id="view"></div>
+
+    <!-- overlays -->
+    <div class="overlay" id="ovCount">
+      <div class="ring"></div>
+      <div class="ovl-kicker" id="countHabit">—</div>
+      <div class="count anim" id="countNum">5</div>
+    </div>
+
+    <div class="overlay" id="ovFocus">
+      <div class="ovl-kicker">Focus</div>
+      <div class="focus-name" id="focusName">—</div>
+      <div class="timer" id="focusTimer">00:00</div>
+      <div class="welcome" id="focusWelcome">Welcome back — finish it.</div>
+      <button class="done-btn" id="focusDone">Done</button>
+    </div>
+
+    <div class="overlay cele" id="ovCele">
+      <div class="emoji">🎉</div>
+      <h1>It's a habit now.</h1>
+      <p id="celeText">30 days. You did it.</p>
+      <button class="done-btn" id="celeClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="devbar">
+  <span class="lab">prototype controls — fast-forward time (the real app uses real days)</span>
+  <span class="day">Simulated day: <b id="simDay">1</b></span>
+  <button id="skipDay">⏭ Skip a day (miss)</button>
+  <button id="reset">↺ Reset everything</button>
+</div>
+<p class="hint">Tap <b>START</b> to run the 5·4·3·2·1 ritual and strike off a day. Use “Skip a day” to see the miss-penalty un-strike your last day. Switch browser tabs mid-focus to trigger the “welcome back” nudge.</p>
+
+<script>
+const GOAL = 30;
+const MS_DAY = 86400000;
+const $ = s => document.querySelector(s);
+
+// ---- persistent state ----
+const base = new Date(); base.setHours(0,0,0,0);
+let state = load() || { habits: [], offset: 0 };
+
+function load(){ try{ return JSON.parse(localStorage.getItem('p54321')); }catch(e){ return null; } }
+function save(){ localStorage.setItem('p54321', JSON.stringify(state)); }
+
+function simNow(){ return new Date(base.getTime() + state.offset*MS_DAY); }
+function key(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+
+// ---- the verified math (mirrors FiveSecondHabitCore.HabitProgress) ----
+function progress(h){
+  const now = simNow();
+  const start = new Date(h.start);
+  const todayKey = key(now);
+  const done = h.done.length;
+  // elapsed days [start, now): start inclusive, today excluded
+  let miss = 0, cur = new Date(start); cur.setHours(0,0,0,0);
+  const end = new Date(now); end.setHours(0,0,0,0);
+  while(cur < end){ if(!h.done.includes(key(cur))) miss++; cur = new Date(cur.getTime()+MS_DAY); }
+  const struck = Math.max(0, Math.min(GOAL, done - miss));
+  return { done, miss, struck, remaining: GOAL-struck, isDoneToday: h.done.includes(todayKey), isComplete: struck>=GOAL };
+}
+
+// ---- rendering ----
+function render(){
+  $('#simDay').textContent = state.offset + 1;
+  const view = $('#view');
+  if(state.habits.length === 0){ view.innerHTML = onboarding(); wireOnboarding(); return; }
+  const canAdd = state.habits.length < 3;
+  view.innerHTML = `
+    <div class="home-head">
+      <h1>5<i>·</i>4<i>·</i>3<i>·</i>2<i>·</i>1</h1>
+      <button class="add-btn" id="addBtn" ${canAdd?'':'disabled'}>+</button>
+    </div>
+    ${state.habits.map((h,i)=>card(h,i)).join('')}
+    ${canAdd?'':'<p class="cap-note">3-habit max — focus beats more.</p>'}
+  `;
+  state.habits.forEach((h,i)=>{
+    $('#start-'+i).onclick = ()=>{ if(!progress(h).isDoneToday) startRitual(i); };
+  });
+  if(canAdd) $('#addBtn').onclick = ()=> addHabit();
+}
+
+function card(h,i){
+  const p = progress(h);
+  const cells = Array.from({length:GOAL},(_,d)=>{
+    const n=d+1; const struck = n<=p.struck;
+    return `<div class="cell ${struck?'struck':''}" data-h="${i}" data-d="${n}">${n}</div>`;
+  }).join('');
+  return `<div class="card" style="animation-delay:${i*70}ms">
+    <div class="card-top">
+      <h2>${escapeHtml(h.name)}</h2>
+      <span class="badge ${p.isDoneToday?'done':''}">${p.isDoneToday?'Done today ✓':(p.isComplete?'Complete':'Day '+(p.struck+1))}</span>
+    </div>
+    <div class="remain">${p.isComplete?'<b>It’s a habit. 🎉</b>':'<b>'+p.remaining+'</b> more days to become a habit'}</div>
+    <div class="grid">${cells}</div>
+    <button class="start ${p.isDoneToday||p.isComplete?'is-done':''}" id="start-${i}">
+      ${p.isComplete?'Complete ✓':(p.isDoneToday?'Done for today':'5·4·3·2·1 — START')}
+    </button>
+  </div>`;
+}
+
+function onboarding(){
+  return `<div class="ob">
+    <span class="kicker">One thing at a time</span>
+    <h1>Pick one thing.<br>Start in 5 seconds.</h1>
+    <p>Name your first habit. 30 days till it sticks.</p>
+    <input class="field" id="obName" placeholder="e.g. Read 10 pages" maxlength="40">
+    <button class="primary" id="obBegin" disabled>Begin</button>
+    <div class="locked">
+      <span class="lk">🔒</span>
+      <div><div class="t1">Block distracting apps</div>
+        <div class="t2">Shield Instagram &amp; co. during focus.</div></div>
+      <span class="pill">UPGRADE</span>
+    </div>
+  </div>`;
+}
+function wireOnboarding(){
+  const inp=$('#obName'), btn=$('#obBegin');
+  inp.oninput=()=> btn.disabled = inp.value.trim()==='';
+  inp.focus();
+  btn.onclick=()=>{ if(inp.value.trim()){ createHabit(inp.value.trim()); } };
+}
+
+function addHabit(){
+  const name = prompt('New habit name:');
+  if(name && name.trim()) createHabit(name.trim());
+}
+function createHabit(name){
+  if(state.habits.length>=3) return;
+  state.habits.push({ name, start: simNow().toISOString(), done: [] });
+  save(); render();
+}
+
+// ---- the ritual ----
+let timerInt=null, leftDuring=false, activeIdx=null;
+function startRitual(i){
+  activeIdx=i; const h=state.habits[i];
+  $('#countHabit').textContent = h.name.toUpperCase();
+  const ov=$('#ovCount'), num=$('#countNum'); ov.classList.add('show');
+  let n=5; num.textContent=n; num.className='count anim'; void num.offsetWidth; num.className='count anim';
+  buzz();
+  const step=()=>{
+    n--;
+    if(n>=1){ num.textContent=n; num.classList.remove('anim'); void num.offsetWidth; num.classList.add('anim'); buzz();
+      setTimeout(step,1000); }
+    else { num.textContent='GO.'; num.className='count go anim'; buzz(); $('#ovCount').querySelector('.ring').style.display='none';
+      setTimeout(()=>{ ov.classList.remove('show'); $('#ovCount').querySelector('.ring').style.display=''; openFocus(i); }, 950); }
+  };
+  setTimeout(step,1000);
+}
+function openFocus(i){
+  const h=state.habits[i]; leftDuring=false;
+  $('#focusName').textContent=h.name; $('#focusWelcome').classList.remove('show');
+  $('#focusTimer').textContent='00:00';
+  let s=0; clearInterval(timerInt);
+  timerInt=setInterval(()=>{ s++; $('#focusTimer').textContent=
+    `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; },1000);
+  $('#ovFocus').classList.add('show');
+}
+$('#focusDone').onclick=()=>{
+  clearInterval(timerInt);
+  const h=state.habits[activeIdx]; const k=key(simNow());
+  if(!h.done.includes(k)) h.done.push(k);
+  save(); $('#ovFocus').classList.remove('show'); buzzDone();
+  render();
+  // pop the newly struck cell
+  const p=progress(h);
+  const cell=document.querySelector(`.cell[data-h="${activeIdx}"][data-d="${p.struck}"]`);
+  if(cell) cell.classList.add('pop');
+  if(p.isComplete) setTimeout(()=>celebrate(h.name), 450);
+};
+
+// leave-during-focus detection
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden && $('#ovFocus').classList.contains('show')){ leftDuring=true; }
+  else if(!document.hidden && leftDuring && $('#ovFocus').classList.contains('show')){
+    $('#focusWelcome').classList.add('show');
+  }
+});
+
+function celebrate(name){
+  $('#celeText').textContent = `30 days of ${name}. You did it.`;
+  const ov=$('#ovCele'); ov.classList.add('show');
+  const colors=['#ff6f91','#ffd07a','#f5f3f7','#ff9eb5'];
+  for(let i=0;i<60;i++){ const c=document.createElement('div'); c.className='confetti';
+    c.style.left=Math.random()*100+'%'; c.style.background=colors[i%4];
+    c.style.animationDuration=(2+Math.random()*2)+'s'; c.style.animationDelay=Math.random()*0.6+'s';
+    ov.appendChild(c); setTimeout(()=>c.remove(),4200); }
+}
+$('#celeClose').onclick=()=> $('#ovCele').classList.remove('show');
+
+// haptics-ish (vibrate where supported)
+function buzz(){ if(navigator.vibrate) navigator.vibrate(18); }
+function buzzDone(){ if(navigator.vibrate) navigator.vibrate([30,40,60]); }
+
+// ---- prototype controls ----
+$('#skipDay').onclick=()=>{ state.offset++; save(); render(); };
+$('#reset').onclick=()=>{ if(confirm('Reset all habits and progress?')){ state={habits:[],offset:0}; save(); render(); } };
+
+function escapeHtml(s){ return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+render();
+</script>
+</body>
+</html>

@@ -317,6 +317,8 @@ body{ background:var(--page); background-image:none; }
 .tabitem.on{ color:var(--accent); }
 .tabitem.add{ background:var(--accent); color:#fff; width:54px; height:54px; border-radius:50%; justify-content:center; margin-top:-22px; box-shadow:var(--shadow-lg); }
 .tabitem.add svg{ width:25px; height:25px; } .tabitem.add span{ display:none; }
+.done-sub{ color:var(--accent); font-weight:600; font-size:13.5px; margin-top:2px; }
+.done-sub b{ font-weight:800; }
 
 /* ===== phone / responsive ===== */
 @media (max-width: 480px){
@@ -339,7 +341,7 @@ body{ background:var(--page); background-image:none; }
 </style>
 </head>
 <body>
-<div class="wordmark">demo · <b>5·4·3·2·1</b> habit tracker · build v7 (olive)</div>
+<div class="wordmark">demo · <b>5·4·3·2·1</b> habit tracker · build v8</div>
 
 <div class="stage">
   <div class="phone">
@@ -401,6 +403,14 @@ body{ background:var(--page); background-image:none; }
         <p id="badgeText">You're past the hardest part.</p>
         <button class="bigbtn" id="badgeShare">Share my progress</button>
         <button class="link" id="badgeClose">keep going</button>
+      </div>
+
+      <div class="ov" id="ovDone">
+        <div class="emoji">🌱</div>
+        <h1>Congratulations!</h1>
+        <p>You should feel good about yourself for starting this. Showing up is the whole game, and you just did.</p>
+        <p class="done-sub" id="doneSub"></p>
+        <button class="bigbtn" id="doneClose">Keep going</button>
       </div>
 
       <div class="ov" id="ovCele">
@@ -683,8 +693,23 @@ $('#focusDone').onclick=()=>{
   save(); $('#ovFocus').classList.remove('show'); buzzDone(); render();
   const p=progress(h);
   const cell=document.querySelector(`.cell[data-d="${p.struck}"]`); if(cell) cell.classList.add('pop');
-  if(p.struck<30) toast(`🔥 ${Math.max(0,30-p.struck)} more days to a routine · ${Math.max(0,15-p.struck)} to the habit`);
-  setTimeout(()=>checkRewards(activeIdx, before, p.struck), 480);
+  setTimeout(()=>afterComplete(activeIdx, before, p.struck), 480);
+};
+
+let pendingReward=null;
+function afterComplete(idx, before, after){
+  const h=state.habits[idx];
+  if(after>=GOAL && !h.maintenance){ celebrate(h.name); return; }
+  pendingReward={idx, before, after};
+  const toRoutine=Math.max(0,30-after), toHabit=Math.max(0,15-after);
+  $('#doneSub').innerHTML = toHabit>0
+    ? `<b>${toHabit}</b> more days to create the habit, <b>${toRoutine}</b> to a routine. Same time tomorrow.`
+    : `<b>${toRoutine}</b> more days to lock in the routine. Same time tomorrow.`;
+  $('#ovDone').classList.add('show');
+}
+$('#doneClose').onclick=()=>{
+  $('#ovDone').classList.remove('show');
+  if(pendingReward){ const r=pendingReward; pendingReward=null; checkRewards(r.idx, r.before, r.after); }
 };
 
 /* ============ REWARDS ============ */
